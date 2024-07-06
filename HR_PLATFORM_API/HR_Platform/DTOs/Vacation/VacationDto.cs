@@ -2,7 +2,7 @@
 {
     public class VacationDto
     {
-        public string CodEmployee { get; set; }
+        public int CodEmployee { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int DaysVacation { get; set; }

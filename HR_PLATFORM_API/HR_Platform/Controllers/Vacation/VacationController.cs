@@ -10,9 +10,11 @@ namespace HR_PLATFORM.Controllers.Vacation
     public class VacationController : ControllerBase
     {
         private readonly IVacationService _vacationService;
-        public VacationController(IVacationService vacationService)
+        private readonly IEmployeeService _employeeService;
+        public VacationController(IVacationService vacationService, IEmployeeService employeeService)
         {
             _vacationService = vacationService;
+            _employeeService = employeeService;
         }
 
         [HttpPost("add")]
@@ -20,22 +22,60 @@ namespace HR_PLATFORM.Controllers.Vacation
         {
             try
             {
-                var vacationModel = new VacationModel
+                var checkEmployee = await _employeeService.GetEmployeeByIdAsync(vacationDto.CodEmployee);
+                if (checkEmployee != null)
                 {
-                    CodEmployee = vacationDto.CodEmployee,
-                    StartDate = vacationDto.StartDate,
-                    EndDate = vacationDto.EndDate,
-                    DaysVacation = vacationDto.DaysVacation,
-                    VacationDaysLeft = vacationDto.VacationDaysLeft,
-                    TypeVacation = vacationDto.TypeVacation
-                };
+                    var vacationModel = new VacationModel
+                    {
+                        CodEmployee = vacationDto.CodEmployee,
+                        StartDate = vacationDto.StartDate,
+                        EndDate = vacationDto.EndDate,
+                        DaysVacation = vacationDto.DaysVacation,
+                        VacationDaysLeft = vacationDto.VacationDaysLeft,
+                        TypeVacation = vacationDto.TypeVacation
+                    };
 
-                await _vacationService.AddVacationAsync(vacationModel);
-                return Ok(new { message = "Adaugare concediu cu succes", status = "success" });
-            } catch (Exception ex)
+                    await _vacationService.AddVacationAsync(vacationModel);
+                    return Ok(new { message = "Adaugare concediu cu succes", status = "success" });
+                }
+                return BadRequest(new { status = "error" });
+            }
+            catch (Exception ex)
             {
                 return BadRequest(new { ex.Message, status = "error" });
             }
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateVacation(int id,[FromBody] VacationDto vacation)
+        {
+            try
+            {
+                var vacationDto = new VacationModel
+                {
+                    StartDate = vacation.StartDate,
+                    EndDate = vacation.EndDate,
+                    DaysVacation = vacation.DaysVacation,
+                    TypeVacation = vacation.TypeVacation,
+                    VacationDaysLeft = vacation.VacationDaysLeft
+                };
+
+                var result = await _vacationService.UpdateVacationAsync(id, vacationDto);
+                if (result) { return Ok(new { message = "Update cu succes", status = "success" }); }
+
+                return BadRequest(new { statut = "error" });
+            }
+            catch { return BadRequest(new {StatusCode = "error"}); }    
+        }
+
+        [HttpGet("{codeEmployee}")]
+        public async Task<List<VacationModel>> GetVacationByEmployee(int codeEmployee)
+        {
+            var vacationDto = await _vacationService.GetVacationsByEmployee(codeEmployee);
+            if (vacationDto == null) { return null; };
+          
+            return vacationDto;
+
         }
     }
 }
