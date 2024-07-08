@@ -57,6 +57,7 @@ namespace HR_PLATFORM_APPLICATION.Services
                 Salary = employee.Salary,
                 ContractDate = employee.ContractDate,
                 OperatorHR = employee.OperatorHR,
+                Studied = employee.Studied,
                 StatutEmployee = employee.StatutEmployee
             };
         }

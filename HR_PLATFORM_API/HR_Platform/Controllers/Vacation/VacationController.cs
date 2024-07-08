@@ -29,7 +29,7 @@ namespace HR_PLATFORM.Controllers.Vacation
                     {
                         CodEmployee = vacationDto.CodEmployee,
                         StartDate = vacationDto.StartDate,
-                        EndDate = vacationDto.EndDate,
+                        EndDate = vacationDto.StartDate.AddDays(vacationDto.DaysVacation),
                         DaysVacation = vacationDto.DaysVacation,
                         VacationDaysLeft = vacationDto.VacationDaysLeft,
                         TypeVacation = vacationDto.TypeVacation
@@ -46,8 +46,8 @@ namespace HR_PLATFORM.Controllers.Vacation
             }
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateVacation(int id,[FromBody] VacationDto vacation)
+        [HttpPatch("updateVcation")]
+        public async Task<IActionResult> UpdateVacation([FromBody] VacationDto vacation)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace HR_PLATFORM.Controllers.Vacation
                     VacationDaysLeft = vacation.VacationDaysLeft
                 };
 
-                var result = await _vacationService.UpdateVacationAsync(id, vacationDto);
+                var result = await _vacationService.UpdateVacationAsync(vacation.CodEmployee, vacationDto);
                 if (result) { return Ok(new { message = "Update cu succes", status = "success" }); }
 
                 return BadRequest(new { statut = "error" });
@@ -72,7 +72,7 @@ namespace HR_PLATFORM.Controllers.Vacation
         public async Task<List<VacationModel>> GetVacationByEmployee(int codeEmployee)
         {
             var vacationDto = await _vacationService.GetVacationsByEmployee(codeEmployee);
-            if (vacationDto == null) { return null; };
+            if (vacationDto.Count == 0) { return new List<VacationModel>(); };
           
             return vacationDto;
 
