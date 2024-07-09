@@ -18,7 +18,8 @@ namespace HR_PLATFORM.Controllers.Auth
         }
 
         //[Authorize(Roles = "admin,user")]
-        [HttpPost("login")]
+        [HttpPost]
+        [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             try
@@ -36,8 +37,9 @@ namespace HR_PLATFORM.Controllers.Auth
             }
         }
 
-        [Authorize]
-        [HttpPost("addEmployeeLogin")]
+        [Authorize(Policy = "admin")]
+        [HttpPost]
+        [Route("addLogin")]
         public async Task<IActionResult> AddEmployeeLogin([FromBody] AddNewLogin registerDto)
         {
             try
