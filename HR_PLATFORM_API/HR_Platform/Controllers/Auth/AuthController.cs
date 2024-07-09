@@ -1,5 +1,6 @@
 ﻿using HR_PLATFORM.DTOs.Auth;
 using HR_PLATFORM_APPLICATION.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ namespace HR_PLATFORM.Controllers.Auth
             _authService = authService;
         }
 
+        //[Authorize(Roles = "admin,user")]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
@@ -34,13 +36,13 @@ namespace HR_PLATFORM.Controllers.Auth
             }
         }
 
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] LoginDto registerDto)
+        [Authorize]
+        [HttpPost("addEmployeeLogin")]
+        public async Task<IActionResult> AddEmployeeLogin([FromBody] AddNewLogin registerDto)
         {
             try
             {
-                await _authService.CreateUserAsync(registerDto.Username, registerDto.Password);
+                await _authService.CreateUserAsync(registerDto.Username, registerDto.Password, registerDto.Role);
                 return Ok(new { message = "Utilizator creat cu succes", newStatus = "success" });
             }
             catch (Exception ex)
