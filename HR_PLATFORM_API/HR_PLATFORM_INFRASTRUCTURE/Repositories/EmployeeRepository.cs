@@ -2,6 +2,7 @@
 using HR_PLATFORM_DOMAIN.Interface;
 using HR_PLATFORM_INFRASTRUCTURE.DbContext;
 using HR_PLATFORM_INFRASTRUCTURE.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
 {
@@ -39,7 +40,8 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
 
         public async Task<Employee> GetEmployeeByIdAsync(int id)
         {
-            var employeeEntity = await _context.Employees.FindAsync(id);
+            var employeeEntity = await _context.Employees
+                .FirstOrDefaultAsync(e => e.CodEmployee == id);
             if (employeeEntity == null)
             {
                 return null;
@@ -66,13 +68,16 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
 
         public async Task<bool> DeleteEmployeeAsync(int id)
         {
-            var employeeEntity = await _context.Employees.FindAsync(id);
-            if (employeeEntity == null)
+            //var employeeEntity = await _context.Employees.FindAsync(id);
+            var employee = await _context.Employees
+                .FirstOrDefaultAsync(e => e.CodEmployee == id);
+
+            if (employee == null)
             {
                 return false;
             }
 
-            _context.Employees.Remove(employeeEntity);
+            _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();
             return true;
         }

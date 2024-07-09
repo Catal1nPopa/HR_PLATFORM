@@ -8,14 +8,14 @@ namespace HR_PLATFORM_DOMAIN.Entity.Vacation
 {
     public class Vacation
     {
-        public string CodEmployee { get; set; }
+        public int CodEmployee { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int DaysVacation { get; set; }
         public int VacationDaysLeft { get; set; }
         public string TypeVacation { get; set; }
 
-        public Vacation(string codEmployee, DateTime startDate, DateTime endDate, int daysVacation, int vacationDaysLeft, string typeVacation)
+        public Vacation(int codEmployee, DateTime startDate, DateTime endDate, int daysVacation, int vacationDaysLeft, string typeVacation)
         {
             CodEmployee = codEmployee;
             StartDate = startDate;

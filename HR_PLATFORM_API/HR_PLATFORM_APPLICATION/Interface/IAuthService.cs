@@ -9,6 +9,6 @@ namespace HR_PLATFORM_APPLICATION.Interface
     public interface IAuthService
     {
         Task<string> AuthenticateAsync(string username, string password);
-        Task CreateUserAsync(string username, string password);
+        Task CreateUserAsync(string username, string password, string role);
     }
 }

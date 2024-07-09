@@ -26,6 +26,24 @@ namespace HR_PLATFORM_APPLICATION.Services
             await _vacationRepository.AddVacation(vacation);
         }
 
+        public async Task<List<VacationModel>> GetVacationsByEmployee(int codeEmployee)
+        {
+            var vacations = await _vacationRepository.GetAllVacationsByEmployee(codeEmployee);
+
+            var vacationModels = vacations.Select(v => new VacationModel
+            {
+                CodEmployee = v.CodEmployee,
+                StartDate = v.StartDate,
+                EndDate = v.EndDate,
+                DaysVacation = v.DaysVacation,
+                VacationDaysLeft = v.VacationDaysLeft,
+                TypeVacation = v.TypeVacation
+            }).ToList();
+
+            return vacationModels;
+        }
+
+
         public async Task<bool> UpdateVacationAsync(int codeEmployee, VacationModel vacationModel)
         {
             var existingVacation = await _vacationRepository.GetVacationByIdAsync(codeEmployee);
@@ -49,6 +67,10 @@ namespace HR_PLATFORM_APPLICATION.Services
             if(vacationModel.TypeVacation != existingVacation.TypeVacation)
             {
                 existingVacation.TypeVacation = vacationModel.TypeVacation;
+            }
+            if(vacationModel.VacationDaysLeft != existingVacation.VacationDaysLeft)
+            {
+                existingVacation.VacationDaysLeft = vacationModel.VacationDaysLeft;
             }
 
             return await _vacationRepository.UpdateVacation(codeEmployee, existingVacation);

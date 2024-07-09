@@ -9,7 +9,7 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Entities
     public class VacationEntity
     {
         public int Id { get; set; }
-        public string CodEmployee { get; set; }
+        public int CodEmployee { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int DaysVacation { get; set; }

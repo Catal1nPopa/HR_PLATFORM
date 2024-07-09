@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using HR_PLATFORM_APPLICATION.Interface;
 using HR_PLATFORM_DOMAIN.Entity.Auth;
 using HR_PLATFORM_DOMAIN.Interface;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -27,22 +28,32 @@ namespace HR_PLATFORM_APPLICATION.Services
                 return null;
             }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var jwtHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes("catalincatalinkey202020202020202");
+            var identity = new ClaimsIdentity(new Claim[]
             {
-                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, user.Username) }),
-                Expires = DateTime.UtcNow.AddHours(3),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+            });
+
+            var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
+
+            var tokenDescriptor = new SecurityTokenDescriptor()
+            {
+                Subject = identity,
+                Expires = DateTime.Now.AddMinutes(1),
+                SigningCredentials = credentials
             };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+
+            var token = jwtHandler.CreateToken(tokenDescriptor);
+            return jwtHandler.WriteToken(token);
         }
 
-        public async Task CreateUserAsync(string username, string password)
+        public async Task CreateUserAsync(string username, string password, string role)
         {
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
-            var user = new User(username, passwordHash);
+            var user = new User(username, passwordHash, role);
             await _userRepository.AddUserAsync(user);
         }
     }
