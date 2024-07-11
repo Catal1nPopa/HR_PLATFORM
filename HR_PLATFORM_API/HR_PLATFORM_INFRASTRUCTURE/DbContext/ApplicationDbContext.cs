@@ -9,13 +9,17 @@ namespace HR_PLATFORM_INFRASTRUCTURE.DbContext
         public ApplicationDbContext()
         {
         }
-        public ApplicationDbContext(DbContextOptions<Microsoft.EntityFrameworkCore.DbContext> options) : base(options)
+        private readonly IConfiguration _configuration;
+
+        public ApplicationDbContext(IConfiguration configuration, DbContextOptions<ApplicationDbContext> options)
+            : base(options)
         {
+            _configuration = configuration;
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("Server=CATALIN; Database=HR_PLATFORM; Integrated Security=True; TrustServerCertificate=True;");
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+            optionsBuilder.UseSqlServer(connectionString);
         }
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<EmployeeEntity> Employees { get; set; }

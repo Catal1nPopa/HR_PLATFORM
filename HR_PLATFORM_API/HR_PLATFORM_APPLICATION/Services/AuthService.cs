@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using HR_PLATFORM_APPLICATION.Interface;
@@ -29,7 +30,9 @@ namespace HR_PLATFORM_APPLICATION.Services
             }
 
             var jwtHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("catalincatalinkey202020202020202");
+            string getKey = _configuration.GetSection("Jwt").GetSection("Key").Value;
+            //var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+            var key = Encoding.ASCII.GetBytes(getKey);
             var identity = new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Role, user.Role),
@@ -52,9 +55,21 @@ namespace HR_PLATFORM_APPLICATION.Services
 
         public async Task CreateUserAsync(string username, string password, string role)
         {
-            var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
-            var user = new User(username, passwordHash, role);
+            var passwordHash = HashPasword(password, out var salt);
+            var user = new User(username, passwordHash, role, salt);
             await _userRepository.AddUserAsync(user);
+        }
+
+        string HashPasword(string password, out byte[] salt)
+        {
+            salt = RandomNumberGenerator.GetBytes(64); //keySize 
+            var hash = Rfc2898DeriveBytes.Pbkdf2(
+                Encoding.UTF8.GetBytes(password),
+                salt,
+                350000, //iterations
+                HashAlgorithmName.SHA512, //hashAlgorithm
+                64); //keySize 
+            return Convert.ToHexString(hash);
         }
     }
 }

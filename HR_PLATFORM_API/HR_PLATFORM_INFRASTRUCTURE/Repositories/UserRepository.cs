@@ -22,7 +22,7 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
                 return null;
             }
 
-            return new User(userEntity.Username, userEntity.PasswordHash, userEntity.Role);
+            return new User(userEntity.Username, userEntity.PasswordHash, userEntity.Role, userEntity.Salt);
         }
 
         public async Task AddUserAsync(User user)
@@ -31,7 +31,8 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
             {
                 Username = user.Username,
                 PasswordHash = user.PasswordHash,
-                Role = user.Role
+                Role = user.Role,
+                Salt = user.Salt
             };
             _context.Users.Add(userEntity);
             await _context.SaveChangesAsync();
