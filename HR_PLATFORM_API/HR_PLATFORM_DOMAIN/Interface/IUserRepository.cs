@@ -11,5 +11,6 @@ namespace HR_PLATFORM_DOMAIN.Interface
     {
         Task<User> GetUserByUsername(string username);
         Task AddUserAsync(User user);
+        Task UpdateUserPass(User user);
     }
 }

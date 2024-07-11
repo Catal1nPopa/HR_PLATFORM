@@ -7,10 +7,14 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using HR_PLATFORM_APPLICATION.Interface;
+using HR_PLATFORM_APPLICATION.Model.Auth;
+using HR_PLATFORM_APPLICATION.Model.Vacation;
 using HR_PLATFORM_DOMAIN.Entity.Auth;
 using HR_PLATFORM_DOMAIN.Interface;
+using HR_PLATFORM_INFRASTRUCTURE.Migrations;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 
 namespace HR_PLATFORM_APPLICATION.Services
@@ -21,12 +25,20 @@ namespace HR_PLATFORM_APPLICATION.Services
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IConfiguration _configuration = configuration;
 
-        public async Task<string> AuthenticateAsync(string username, string password)
+        public async Task<AuthResult> AuthenticateAsync(string username, string password)
         {
             var user = await _userRepository.GetUserByUsername(username);
             if (user == null || !user.CheckPassword(password))
             {
                 return null;
+            }
+            if (user.FirstLogin)
+            {
+                return new AuthResult
+                {
+                    Token = null,
+                    IsFirstLogin = user.FirstLogin,
+                };
             }
 
             var jwtHandler = new JwtSecurityTokenHandler();
@@ -48,16 +60,41 @@ namespace HR_PLATFORM_APPLICATION.Services
                 Expires = DateTime.Now.AddMinutes(1),
                 SigningCredentials = credentials
             };
-
             var token = jwtHandler.CreateToken(tokenDescriptor);
-            return jwtHandler.WriteToken(token);
+            return new AuthResult
+            {
+                Token = jwtHandler.WriteToken(token),
+                IsFirstLogin = user.FirstLogin,
+            };
+        }
+
+        public async Task ChangeUserPassword(string username, string password)
+        {
+            var passwordHash = HashPasword(password, out var salt);
+            var user = new User(username, passwordHash, "none", salt, false);
+            await _userRepository.UpdateUserPass(user);
         }
 
         public async Task CreateUserAsync(string username, string password, string role)
         {
             var passwordHash = HashPasword(password, out var salt);
-            var user = new User(username, passwordHash, role, salt);
+            var user = new User(username, passwordHash, role, salt, true);
             await _userRepository.AddUserAsync(user);
+        }
+
+        public async Task<NewUserModel> GetUser(string username, string password)
+        {
+            var user = await _userRepository.GetUserByUsername(username);
+            if (user == null || !user.CheckPassword(password))
+            {
+                return null;
+            }
+            var userModel = new NewUserModel(
+                user.Username,
+                user.PasswordHash,
+                user.FirstLogin
+                );
+            return userModel;
         }
 
         string HashPasword(string password, out byte[] salt)

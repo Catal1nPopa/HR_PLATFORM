@@ -24,12 +24,16 @@ namespace HR_PLATFORM.Controllers.Auth
         {
             try
             {
-                var token = await _authService.AuthenticateAsync(loginDto.Username, loginDto.Password);
-                if (token == null)
+                var authResult = await _authService.AuthenticateAsync(loginDto.Username, loginDto.Password);
+                if (authResult == null)
                 {
                     return Unauthorized();
                 }
-                return Ok(new { token, message = "Logare cu succes", status = "success" });
+                if (authResult.IsFirstLogin)
+                {
+                    return RedirectToAction("ChangePassword", "Auth", new { username = loginDto.Username, newPassword = "temporaryPassword" });
+                }
+                return Ok(new { token = authResult.Token, message = "Logare cu succes", status = "success" });
             }
             catch (Exception ex)
             {
@@ -48,6 +52,21 @@ namespace HR_PLATFORM.Controllers.Auth
                 return Ok(new { message = "Utilizator creat cu succes", newStatus = "success" });
             }
             catch (Exception ex)
+            {
+                return BadRequest(new { ex.Message, status = "error" });
+            }
+        }
+
+        [HttpGet]
+        [Route("ChangePassword")]
+        public async Task<IActionResult> ChangePassword(string username, string newPassword)
+        {
+            try
+            {
+                await _authService.ChangeUserPassword(username, newPassword);
+                return Ok(new { message = "Schimbă parola pentru utilizatorul: " + username });
+            }
+            catch(Exception ex) 
             {
                 return BadRequest(new { ex.Message, status = "error" });
             }
