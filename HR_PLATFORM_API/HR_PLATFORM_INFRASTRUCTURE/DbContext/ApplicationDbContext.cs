@@ -18,8 +18,10 @@ namespace HR_PLATFORM_INFRASTRUCTURE.DbContext
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString = _configuration.GetConnectionString("DefaultConnection");
-            optionsBuilder.UseSqlServer(connectionString);
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseSqlServer("Server=CATALIN; Database=HR_PLATFORM; Integrated Security=True; TrustServerCertificate=True;");
+            //var connectionString = _configuration.GetConnectionString("DefaultConnection");
+            //optionsBuilder.UseSqlServer(connectionString);
         }
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<EmployeeEntity> Employees { get; set; }

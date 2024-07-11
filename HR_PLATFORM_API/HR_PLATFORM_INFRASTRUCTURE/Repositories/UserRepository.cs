@@ -22,7 +22,7 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
                 return null;
             }
 
-            return new User(userEntity.Username, userEntity.PasswordHash, userEntity.Role, userEntity.Salt);
+            return new User(userEntity.Username, userEntity.PasswordHash, userEntity.Role, userEntity.Salt, userEntity.FirstLogin);
         }
 
         public async Task AddUserAsync(User user)
@@ -32,10 +32,23 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
                 Username = user.Username,
                 PasswordHash = user.PasswordHash,
                 Role = user.Role,
-                Salt = user.Salt
+                Salt = user.Salt,
+                FirstLogin = true,
             };
             _context.Users.Add(userEntity);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateUserPass(User user)
+        {
+            var userEntity = await _context.Users.SingleOrDefaultAsync(u => u.Username == user.Username);
+            if (userEntity != null)
+            {
+                userEntity.FirstLogin = user.FirstLogin;
+                userEntity.PasswordHash = user.PasswordHash;
+                userEntity.Salt = user.Salt;
+                await _context.SaveChangesAsync();
+            }
         }
     }
     
