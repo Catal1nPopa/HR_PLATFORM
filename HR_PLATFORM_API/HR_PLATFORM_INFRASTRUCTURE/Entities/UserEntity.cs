@@ -12,5 +12,6 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Entities
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public string Role {  get; set; }
+        public byte[] Salt { get; set; }
     }
 }
