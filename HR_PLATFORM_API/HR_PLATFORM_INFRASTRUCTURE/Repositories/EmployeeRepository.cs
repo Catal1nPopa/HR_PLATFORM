@@ -27,7 +27,7 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
                 PhoneNumber = employee.PhoneNumber,
                 Department = employee.Department,
                 Function = employee.Function,
-                Salary = employee.Salary,
+                ContractCode = employee.ContractCode,
                 ContractDate = employee.ContractDate,
                 Studied = employee.Studied,
                 OperatorHR = employee.OperatorHR,
@@ -58,7 +58,7 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
                 employeeEntity.PhoneNumber,
                 employeeEntity.Department,
                 employeeEntity.Function,
-                employeeEntity.Salary,
+                employeeEntity.ContractCode,
                 employeeEntity.ContractDate,
                 employeeEntity.Studied,
                     employeeEntity.OperatorHR,
@@ -97,7 +97,7 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
             employeeEntity.PhoneNumber = employee.PhoneNumber;
             employeeEntity.Department = employee.Department;
             employeeEntity.Function = employee.Function;
-            employeeEntity.Salary = employee.Salary;
+            employeeEntity.ContractCode = employee.ContractCode;
             employeeEntity.Studied = employee.Studied;
             employeeEntity.StatutEmployee = employee.StatutEmployee;
 

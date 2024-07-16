@@ -22,7 +22,7 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Entities
         public string Function { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
-        public decimal Salary { get; set; }
+        public int ContractCode{ get; set; }
         public DateTime ContractDate { get; set; }
         public string Studied { get; set; }
         public string OperatorHR { get; set; }
