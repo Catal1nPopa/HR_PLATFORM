@@ -17,7 +17,7 @@ namespace HR_PLATFORM_APPLICATION.Model.Employee
         public decimal PhoneNumber { get; set; }
         public string Department { get; set; }
         public string Function { get; set; }
-        public decimal Salary { get; set; }
+        public int ContractCode{ get; set; }
         public DateTime ContractDate { get; set; }
         public string Studied { get; set; }
         public string OperatorHR { get; set; }
