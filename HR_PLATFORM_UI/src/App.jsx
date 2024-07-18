@@ -5,37 +5,72 @@ import "./App.scss";
 import "./Translate/i18n";
 import { useTranslation } from "react-i18next";
 import SwitchLanguage from "./Translate/SwitchLanguage";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import {
+  Switch,
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+} from "@mui/material";
 
 function App() {
   const [count, setCount] = useState(0);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [toggleDarkMode, setToggleDarkMode] = useState(true);
+
+  const toggleDarkTheme = () => {
+    setToggleDarkMode(!toggleDarkMode);
+  };
+
+  const darkTheme = createTheme({
+    palette: {
+      mode: toggleDarkMode ? "dark" : "light", //default theme
+      primary: {
+        main: "#90caf9",
+      },
+      secondary: {
+        main: "#f48fb1",
+      },
+    },
+  });
 
   return (
     <>
-      <div>
-        <a href='https://vitejs.dev' target='_blank'>
-          <img src={viteLogo} className='logo' alt='Vite logo' />
-        </a>
-        <a href='https://react.dev' target='_blank'>
-          <img src={reactLogo} className='logo react' alt='React logo' />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className='card'>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <button>{t("Login")}</button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className='read-the-docs'>
-        Click on the Vite and React logos to learn more
-      </p>
-
-      <SwitchLanguage />
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <h2>toggle dark mode</h2>
+          <Switch checked={toggleDarkMode} onChange={toggleDarkTheme} />
+          <Card sx={{ width: "30%", borderRadius: 3, padding: 1 }}>
+            <CardContent>
+              <CardMedia
+                sx={{ height: 180, borderRadius: 3 }}
+                image='https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg'
+                title='semaphore'
+              />
+              <Typography variant='h4' component='div' sx={{ marginTop: 3 }}>
+                <button>{t("Logout")}</button> <button>{t("Login")}</button>
+              </Typography>
+              <Typography sx={{ mb: 1.5 }} color='text.secondary'>
+                by Semaphore
+              </Typography>
+              <Typography variant='body1'>{t("Description")}</Typography>
+              <SwitchLanguage />
+            </CardContent>
+          </Card>
+        </div>
+      </ThemeProvider>
     </>
+    //    <SwitchLanguage />
+    //  </>
   );
 }
 
