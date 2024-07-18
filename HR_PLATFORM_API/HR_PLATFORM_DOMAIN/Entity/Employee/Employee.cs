@@ -17,13 +17,14 @@ namespace HR_PLATFORM_DOMAIN.Entity.Employee
         public decimal PhoneNumber { get;  set; }
         public string Department { get;  set; }
         public string Function { get;  set; }
-        public decimal Salary { get;  set; }
+        public int ContractCode{ get;  set; }
         public DateTime ContractDate { get;  set; }
         public string Studied { get;  set; }
         public string OperatorHR { get;  set; }
         public bool StatutEmployee { get; set; }
 
-        public Employee(string firstName, string lastName, DateTime birthday, string address, string email, int codEmployee, decimal phoneNumber, string department, string function, decimal salary, DateTime contractDate, string studied, string operatorHR, bool statutEmployee)
+        public Employee() { }
+        public Employee(string firstName, string lastName, DateTime birthday, string address, string email, decimal phoneNumber, string department, string function, int contractCode, DateTime contractDate, string studied, string operatorHR, int codEmployee, bool statutEmployee)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -34,7 +35,7 @@ namespace HR_PLATFORM_DOMAIN.Entity.Employee
             PhoneNumber = phoneNumber;
             Department = department;
             Function = function;
-            Salary = salary;
+            ContractCode = contractCode;
             ContractDate = contractDate;
             Studied = studied;
             OperatorHR = operatorHR;

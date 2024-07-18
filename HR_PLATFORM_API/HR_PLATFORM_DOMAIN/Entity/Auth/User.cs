@@ -11,6 +11,11 @@ namespace HR_PLATFORM_DOMAIN.Entity.Auth
         public string Role { get; private set; }
         public bool FirstLogin { get; private set; }
 
+        public User(string username)
+        {
+            Username = username;
+        }
+
         public User(string username, string passwordHash, byte[] salt)
         {
             Username = username;
@@ -19,6 +24,16 @@ namespace HR_PLATFORM_DOMAIN.Entity.Auth
         }
         public User(string username, string passwordHash, string role, byte[] salt, bool firstLogin)
         {
+            Username = username;
+            PasswordHash = passwordHash;
+            Role = role;
+            Salt = salt;
+            FirstLogin = firstLogin;
+        }
+
+        public User(int id, string username, string passwordHash, string role, byte[] salt, bool firstLogin)
+        {
+            Id = id;
             Username = username;
             PasswordHash = passwordHash;
             Role = role;

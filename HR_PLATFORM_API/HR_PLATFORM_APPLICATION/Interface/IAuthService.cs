@@ -11,7 +11,7 @@ namespace HR_PLATFORM_APPLICATION.Interface
     {
         //Task<string> AuthenticateAsync(string username, string password);
         Task<AuthResult> AuthenticateAsync(string username, string password);
-        Task CreateUserAsync(string username, string password, string role);
-        Task ChangeUserPassword(string username, string password);
+        Task<bool> CreateUserAsync(string username, string password, string role);
+        Task<bool> ChangeUserPassword(string username, string password);
     }
 }

@@ -26,12 +26,13 @@ namespace HR_PLATFORM_APPLICATION.Services
             await _vacationRepository.AddVacation(vacation);
         }
 
-        public async Task<List<VacationModel>> GetVacationsByEmployee(int codeEmployee)
+        public async Task<List<VacationModel>> GetVacationsEmployees()
         {
-            var vacations = await _vacationRepository.GetAllVacationsByEmployee(codeEmployee);
+            var vacations = await _vacationRepository.GetAllVacations();
 
             var vacationModels = vacations.Select(v => new VacationModel
             {
+                Id = v.Id,
                 CodEmployee = v.CodEmployee,
                 StartDate = v.StartDate,
                 EndDate = v.EndDate,
@@ -43,10 +44,25 @@ namespace HR_PLATFORM_APPLICATION.Services
             return vacationModels;
         }
 
-
-        public async Task<bool> UpdateVacationAsync(int codeEmployee, VacationModel vacationModel)
+        public async Task<List<VacationModel>> GetEmployeeVacations(int codeEmployee)
         {
-            var existingVacation = await _vacationRepository.GetVacationByIdAsync(codeEmployee);
+            var vacations = await _vacationRepository.GetEmployeeVacations(codeEmployee);
+            var vacationModels = vacations.Select(v => new VacationModel
+            {
+                Id = v.Id,
+                CodEmployee = v.CodEmployee,
+                StartDate = v.StartDate,
+                EndDate = v.EndDate,
+                DaysVacation = v.DaysVacation,
+                VacationDaysLeft = v.VacationDaysLeft,
+                TypeVacation = v.TypeVacation
+            }).ToList();
+            return vacationModels;
+        }
+
+        public async Task<bool> UpdateVacationAsync(VacationModel vacationModel)
+        {
+            var existingVacation = await _vacationRepository.GetVacationByIdAsync(vacationModel.Id);
             if (existingVacation == null)
             {
                 return false;
@@ -73,7 +89,7 @@ namespace HR_PLATFORM_APPLICATION.Services
                 existingVacation.VacationDaysLeft = vacationModel.VacationDaysLeft;
             }
 
-            return await _vacationRepository.UpdateVacation(codeEmployee, existingVacation);
+            return await _vacationRepository.UpdateVacation(existingVacation);
         }
     }
 }

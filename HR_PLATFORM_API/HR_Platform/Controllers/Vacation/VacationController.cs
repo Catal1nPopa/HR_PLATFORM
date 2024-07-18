@@ -53,6 +53,8 @@ namespace HR_PLATFORM.Controllers.Vacation
             {
                 var vacationDto = new VacationModel
                 {
+                    Id = vacation.Id,
+                    CodEmployee = vacation.CodEmployee,
                     StartDate = vacation.StartDate,
                     EndDate = vacation.EndDate,
                     DaysVacation = vacation.DaysVacation,
@@ -60,7 +62,7 @@ namespace HR_PLATFORM.Controllers.Vacation
                     VacationDaysLeft = vacation.VacationDaysLeft
                 };
 
-                var result = await _vacationService.UpdateVacationAsync(vacation.CodEmployee, vacationDto);
+                var result = await _vacationService.UpdateVacationAsync( vacationDto);
                 if (result) { return Ok(new { message = "Update cu succes", status = "success" }); }
 
                 return BadRequest(new { statut = "error" });
@@ -68,14 +70,20 @@ namespace HR_PLATFORM.Controllers.Vacation
             catch { return BadRequest(new {StatusCode = "error"}); }    
         }
 
-        [HttpGet("{codeEmployee}")]
-        public async Task<List<VacationModel>> GetVacationByEmployee(int codeEmployee)
+        [HttpGet("GetVacationsEmployees")]
+        public async Task<List<VacationModel>> GetVacationsEmployees()
         {
-            var vacationDto = await _vacationService.GetVacationsByEmployee(codeEmployee);
+            List<VacationModel> vacationDto = await _vacationService.GetVacationsEmployees();
             if (vacationDto.Count == 0) { return new List<VacationModel>(); };
-          
             return vacationDto;
+        }
 
+        [HttpGet("GetVacationsEmployee")]
+        public async Task<List<VacationModel>> GetVacationsEmployee(int codeEmployee)
+        {
+            var vacations = await _vacationService.GetEmployeeVacations(codeEmployee);
+            if(vacations.Count == 0) { return new List<VacationModel>(); };
+            return vacations;
         }
     }
 }

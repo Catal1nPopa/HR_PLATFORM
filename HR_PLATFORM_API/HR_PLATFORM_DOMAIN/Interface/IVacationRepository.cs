@@ -5,8 +5,9 @@ namespace HR_PLATFORM_DOMAIN.Interface
     public interface IVacationRepository
     {
         Task AddVacation(Vacation vacation);
-        Task<bool> UpdateVacation(int codEmployee, Vacation vacation);
-        Task<Vacation> GetVacationByIdAsync(int codEmployee);
-        Task<List<Vacation>> GetAllVacationsByEmployee(int codeEmployee);
+        Task<bool> UpdateVacation(Vacation vacation);
+        Task<Vacation> GetVacationByIdAsync(int idVacation);
+        Task<List<Vacation>> GetAllVacations();
+        Task<List<Vacation>> GetEmployeeVacations(int codeEmployee);
     }
 }

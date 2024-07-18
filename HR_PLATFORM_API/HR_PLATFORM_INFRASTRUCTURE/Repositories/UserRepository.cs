@@ -1,55 +1,70 @@
-﻿using HR_PLATFORM_DOMAIN.Entity.Auth;
-using HR_PLATFORM_DOMAIN.Interface;
+﻿using Dapper;
+using HR_PLATFORM_DOMAIN.Entity.Auth;
 using HR_PLATFORM_INFRASTRUCTURE.DbContext;
-using HR_PLATFORM_INFRASTRUCTURE.Entities;
-using Microsoft.EntityFrameworkCore;
+using HR_PLATFORM_DOMAIN.Interface;
+using System.Data;
 
 namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(DapperContext dapperContext) : IUserRepository
     {
-        private readonly ApplicationDbContext _context;
-        public UserRepository(ApplicationDbContext context)
+        private const bool V = false;
+        private readonly DapperContext _dapperContext = dapperContext;
+
+        public async Task<bool> AddUserAsync(User user)
         {
-            _context = context;
+            var checkUser = await GetUserByUsername(user.Username);
+            if (checkUser != null)
+            {
+                return V;
+            }
+            var query = "INSERT INTO Users (Username, PasswordHash,Role, Salt, FirstLogin) " +
+                "VALUES (@Username, @PasswordHash, @Role, @Salt, @FirstLogin)";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("Username", user.Username, DbType.String);
+            parameters.Add("PasswordHash", user.PasswordHash, DbType.String);
+            parameters.Add("Role", user.Role, DbType.String);
+            parameters.Add("Salt", user.Salt, DbType.Binary);
+            parameters.Add("FirstLogin", user.FirstLogin, DbType.Boolean);
+            
+            using(var connection = _dapperContext.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, parameters);
+                return true;
+            }
         }
 
         public async Task<User> GetUserByUsername(string username)
         {
-            var userEntity = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
-            if (userEntity == null)
+            var query = "SELECT * FROM Users WHERE USERNAME = @username";
+
+            using (var connection = _dapperContext.CreateConnection())
             {
-                return null;
+                return await connection.QuerySingleOrDefaultAsync<User>(query, new {  username });
             }
-
-            return new User(userEntity.Username, userEntity.PasswordHash, userEntity.Role, userEntity.Salt, userEntity.FirstLogin);
         }
 
-        public async Task AddUserAsync(User user)
+        public async Task<bool> UpdateUserPass(User user)
         {
-            var userEntity = new UserEntity
+            var checkUser = await GetUserByUsername(user.Username);
+            if(checkUser == null)
             {
-                Username = user.Username,
-                PasswordHash = user.PasswordHash,
-                Role = user.Role,
-                Salt = user.Salt,
-                FirstLogin = true,
-            };
-            _context.Users.Add(userEntity);
-            await _context.SaveChangesAsync();
-        }
+                return false;
+            }
+            var query = "UPDATE Users SET PasswordHash = @PasswordHash, Salt = @Salt, FirstLogin = @FirstLogin WHERE Username = @Username";
+            var statusLogin = false;
+            var parameters = new DynamicParameters();
+            parameters.Add("Username", user.Username, DbType.String);
+            parameters.Add("PasswordHash", user.PasswordHash, DbType.String);
+            parameters.Add("Salt", user.Salt, DbType.Binary);
+            parameters.Add("FirstLogin", statusLogin, DbType.Boolean);
 
-        public async Task UpdateUserPass(User user)
-        {
-            var userEntity = await _context.Users.SingleOrDefaultAsync(u => u.Username == user.Username);
-            if (userEntity != null)
+            using (var connection = _dapperContext.CreateConnection())
             {
-                userEntity.FirstLogin = user.FirstLogin;
-                userEntity.PasswordHash = user.PasswordHash;
-                userEntity.Salt = user.Salt;
-                await _context.SaveChangesAsync();
+                await connection.ExecuteAsync(query, parameters);
+                return true;
             }
         }
     }
-    
 }

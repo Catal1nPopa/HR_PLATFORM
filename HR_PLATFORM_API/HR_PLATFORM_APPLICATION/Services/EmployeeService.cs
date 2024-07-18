@@ -22,14 +22,14 @@ namespace HR_PLATFORM_APPLICATION.Services
                 employeeModel.Birthday,
                 employeeModel.Address,
                 employeeModel.Email,
-                employeeModel.CodEmployee,
                 employeeModel.PhoneNumber,
                 employeeModel.Department,
                 employeeModel.Function,
-                employeeModel.Salary,
+                employeeModel.ContractCode,
                 employeeModel.ContractDate,
                 employeeModel.Studied,
                 employeeModel.OperatorHR,
+                employeeModel.CodEmployee,
                 employeeModel.StatutEmployee);
 
             await _employeeRepository.AddEmployee(employee);
@@ -54,7 +54,7 @@ namespace HR_PLATFORM_APPLICATION.Services
                 PhoneNumber = employee.PhoneNumber,
                 Department = employee.Department,
                 Function = employee.Function,
-                Salary = employee.Salary,
+                ContractCode = employee.ContractCode,
                 ContractDate = employee.ContractDate,
                 OperatorHR = employee.OperatorHR,
                 Studied = employee.Studied,
@@ -101,9 +101,9 @@ namespace HR_PLATFORM_APPLICATION.Services
             {
                 existingEmployee.Function= updateEmployeeDto.Function;
             }
-            if (updateEmployeeDto.Salary != 0)
+            if (updateEmployeeDto.ContractCode != 0)
             {
-                existingEmployee.Salary = updateEmployeeDto.Salary;
+                existingEmployee.ContractCode = updateEmployeeDto.ContractCode;
             }
             if (updateEmployeeDto.Studied != null)
             {

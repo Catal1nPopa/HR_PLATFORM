@@ -5,7 +5,8 @@ namespace HR_PLATFORM_APPLICATION.Interface
     public interface IVacationService
     {
         Task AddVacationAsync(VacationModel vacationModel);
-        Task<bool> UpdateVacationAsync(int codeEmployee, VacationModel vacationModel);
-        Task<List<VacationModel>> GetVacationsByEmployee(int codeEmployee);
+        Task<bool> UpdateVacationAsync(VacationModel vacationModel);
+        Task<List<VacationModel>> GetVacationsEmployees();
+        Task<List<VacationModel>> GetEmployeeVacations(int employeeId);
     }
 }
