@@ -1,92 +1,88 @@
-﻿using HR_PLATFORM_DOMAIN.Entity.Vacation;
+﻿using Dapper;
+using HR_PLATFORM_DOMAIN.Entity.Auth;
+using HR_PLATFORM_DOMAIN.Entity.Vacation;
 using HR_PLATFORM_DOMAIN.Interface;
 using HR_PLATFORM_INFRASTRUCTURE.DbContext;
-using HR_PLATFORM_INFRASTRUCTURE.Entities;
-using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
 {
-    public class VacationRepository : IVacationRepository
+    public class VacationRepository(DapperContext dapperContext) : IVacationRepository
     {
-        private readonly ApplicationDbContext _context;
-        public VacationRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
+        private readonly DapperContext _dapperContext = dapperContext;
         public async Task AddVacation(Vacation vacation)
         {
+            var query = "INSERT INTO Vacations(TypeVacation, VacationDaysLeft, DaysVacation, CodEmployee, EndDate, StartDate)" +
+                "VALUES(@TypeVacation, @VacationDaysLeft, @DaysVacation, @CodEmployee,@EndDate, @StartDate)";
 
-            var vacationEntity = new VacationEntity
+            var parameters = new DynamicParameters();
+            parameters.Add("TypeVacation", vacation.TypeVacation, DbType.String);
+            parameters.Add("VacationDaysLeft", vacation.VacationDaysLeft, DbType.Int64);
+            parameters.Add("DaysVacation", vacation.DaysVacation, DbType.Int64);
+            parameters.Add("CodEmployee", vacation.CodEmployee, DbType.Int64);
+            parameters.Add("EndDate", vacation.EndDate, DbType.DateTime);
+            parameters.Add("StartDate", vacation.StartDate, DbType.DateTime);
+
+            using (var connection = _dapperContext.CreateConnection())
             {
-                CodEmployee = vacation.CodEmployee,
-                StartDate = vacation.StartDate,
-                EndDate = vacation.EndDate,
-                DaysVacation = vacation.DaysVacation,
-                VacationDaysLeft = vacation.VacationDaysLeft,
-                TypeVacation = vacation.TypeVacation
-            };
-
-            _context.Vacations.Add(vacationEntity);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<List<Vacation>> GetAllVacationsByEmployee(int codEmployee)
-        {
-            var vacationEntities = await _context.Vacations
-                .Where(v => v.CodEmployee == codEmployee)
-                .ToListAsync();
-
-            var vacations = vacationEntities.Select(v => new Vacation(
-            v.CodEmployee,
-            v.StartDate,
-            v.EndDate,
-            v.DaysVacation,
-            v.VacationDaysLeft,
-            v.TypeVacation
-            )).ToList();
-
-            return vacations;
-        }
-
-        public async Task<Vacation> GetVacationByIdAsync(int codEmployee)
-        {
-            var vacationEntity = await _context.Vacations
-                .Where(v => v.CodEmployee == codEmployee)
-                .OrderByDescending(v => v.Id)  
-                .FirstOrDefaultAsync();
-
-            if (vacationEntity == null)
-            {
-                return null;
+                await connection.ExecuteAsync(query, parameters);
             }
-
-            return new Vacation(
-                    vacationEntity.CodEmployee,
-                    vacationEntity.StartDate,
-                    vacationEntity.EndDate,
-                    vacationEntity.DaysVacation,
-                    vacationEntity.VacationDaysLeft,
-                    vacationEntity.TypeVacation
-                );
         }
 
-        public async Task<bool> UpdateVacation(int codEmployee, Vacation vacation)
+        public async Task<List<Vacation>> GetAllVacations()
         {
-            var vacationEntity = await _context.Vacations
-                .Where(v => v.CodEmployee == codEmployee)
-                .OrderByDescending(v => v.Id)
-                .FirstOrDefaultAsync();
+            var query = "SELECT Id, TypeVacation, VacationDaysLeft, DaysVacation, CodEmployee, EndDate, StartDate FROM Vacations";
 
-            if(vacationEntity == null) { return false;}
+            using (var connection = _dapperContext.CreateConnection())
+            {
+                return (await connection.QueryAsync<Vacation>(query)).ToList();
+            }
+        }
 
-            vacationEntity.StartDate = vacation.StartDate;
-            vacationEntity.EndDate = vacation.EndDate;
-            vacationEntity.DaysVacation = vacation.DaysVacation;
-            vacationEntity.TypeVacation = vacation.TypeVacation;
+        public async Task<List<Vacation>> GetEmployeeVacations(int codeEmployee)
+        {
+            var query = "SELECT Id, TypeVacation, VacationDaysLeft, DaysVacation, CodEmployee, EndDate, StartDate FROM Vacations " +
+                "WHERE CodEmployee = @CodEmployee";
 
-            await _context.SaveChangesAsync();
-            return true;
+            var parameters = new DynamicParameters();
+            parameters.Add("CodEmployee", codeEmployee, DbType.Int64);
+
+            using (var connection = _dapperContext.CreateConnection())
+            {
+                return (await connection.QueryAsync<Vacation>(query, parameters)).ToList();
+            }
+        }
+
+
+
+        public async Task<Vacation> GetVacationByIdAsync(int codVacation)
+        {
+            var query = "SELECT Id, TypeVacation, VacationDaysLeft, DaysVacation, CodEmployee, EndDate, StartDate FROM Vacations WHERE Id = @codVacation";
+            using (var connection = _dapperContext.CreateConnection())
+            {
+                return await connection.QuerySingleOrDefaultAsync<Vacation>(query, new { codVacation });
+            }
+        }
+
+        public async Task<bool> UpdateVacation(Vacation vacation)
+        {
+            var query = "UPDATE Vacations SET TypeVacation = @TypeVacation, VacationDaysLeft = @VacationDaysLeft, DaysVacation = @DaysVacation," +
+                "EndDate = @EndDate, StartDate = @StartDate WHERE CodEmployee = @CodEmployee AND Id = @Id";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("TypeVacation", vacation.TypeVacation, DbType.String);
+            parameters.Add("VacationDaysLeft", vacation.VacationDaysLeft, DbType.Int64);
+            parameters.Add("DaysVacation", vacation.DaysVacation, DbType.Int64);
+            parameters.Add("CodEmployee", vacation.CodEmployee, DbType.Int64);
+            parameters.Add("EndDate", vacation.EndDate, DbType.DateTime);
+            parameters.Add("StartDate", vacation.StartDate, DbType.DateTime);
+            parameters.Add("Id", vacation.Id, DbType.Int64);
+
+            using (var connection = _dapperContext.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, parameters);
+                return true;
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ namespace HR_PLATFORM_APPLICATION.Model.Vacation
 {
     public class VacationModel
     {
+        public int Id { get; set; }
         public int CodEmployee { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

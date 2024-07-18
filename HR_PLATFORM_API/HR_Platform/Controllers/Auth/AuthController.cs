@@ -49,9 +49,16 @@ namespace HR_PLATFORM.Controllers.Auth
         {
             try
             {
-                await _authService.CreateUserAsync(registerDto.Username, registerDto.Password, registerDto.Role);
-                _logger.LogInformation($"New user created: Username: {registerDto.Username}, Role: {registerDto.Role}");
-                return Ok(new { message = "Utilizator creat cu succes", newStatus = "success" });
+                var response = await _authService.CreateUserAsync(registerDto.Username, registerDto.Password, registerDto.Role);
+                if (response)
+                {
+                    _logger.LogInformation($"New user created: Username: {registerDto.Username}, Role: {registerDto.Role}");
+                    return Ok(new { message = "Utilizator creat cu succes", newStatus = "success" });
+                }
+                else
+                {
+                    return BadRequest(new { status = "error", Message = "Utilizatorul nu a fost creat" });
+                }
             }
             catch (Exception ex)
             {
@@ -60,16 +67,23 @@ namespace HR_PLATFORM.Controllers.Auth
             }
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         [Route("ChangePassword")]
         public async Task<IActionResult> ChangePassword(string username, string newPassword)
         {
             try
             {
-                _logger.LogInformation($"Changed password: {username}");
-                await _authService.ChangeUserPassword(username, newPassword);
-                return Ok(new { message = "Schimbă parola pentru utilizatorul: " + username });
+                var result = await _authService.ChangeUserPassword(username, newPassword);
+                if(result)
+                {
+                    _logger.LogInformation($"Changed password: {username}");
+                    return Ok(new { message = "Schimbă parola pentru utilizatorul: " + username });
+                }
+                else
+                {
+                    return BadRequest(new { Message = "Eroare la schimbare parola", status = "error" });
+                }
             }
             catch(Exception ex) 
             {

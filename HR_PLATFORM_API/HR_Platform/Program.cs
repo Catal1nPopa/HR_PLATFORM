@@ -1,7 +1,5 @@
 ﻿using HR_PLATFORM_APPLICATION.Injections;
-using HR_PLATFORM_INFRASTRUCTURE.DbContext;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -62,10 +60,6 @@ builder.Services.AddCors(option => option.AddPolicy(name: "HR_PLATFORM",
     {
         policy.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
     }));
-
-builder.Services.AddDbContext<ApplicationDbContext>();
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAuthentication(options =>
 {

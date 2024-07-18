@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using HR_PLATFORM_APPLICATION.Interface;
+using HR_PLATFORM_APPLICATION.Model.Auth;
+using HR_PLATFORM_DOMAIN.Entity.Auth;
+using HR_PLATFORM_DOMAIN.Interface;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using HR_PLATFORM_APPLICATION.Interface;
-using HR_PLATFORM_APPLICATION.Model.Auth;
-using HR_PLATFORM_APPLICATION.Model.Vacation;
-using HR_PLATFORM_DOMAIN.Entity.Auth;
-using HR_PLATFORM_DOMAIN.Interface;
-using HR_PLATFORM_INFRASTRUCTURE.Migrations;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Identity.Client;
-using Microsoft.IdentityModel.Tokens;
 
 namespace HR_PLATFORM_APPLICATION.Services
 {
@@ -57,7 +49,7 @@ namespace HR_PLATFORM_APPLICATION.Services
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = identity,
-                Expires = DateTime.Now.AddMinutes(1),
+                Expires = DateTime.Now.AddMinutes(10),
                 SigningCredentials = credentials
             };
             var token = jwtHandler.CreateToken(tokenDescriptor);
@@ -68,18 +60,18 @@ namespace HR_PLATFORM_APPLICATION.Services
             };
         }
 
-        public async Task ChangeUserPassword(string username, string password)
+        public async Task<bool> ChangeUserPassword(string username, string password)
         {
             var passwordHash = HashPasword(password, out var salt);
             var user = new User(username, passwordHash, "none", salt, false);
-            await _userRepository.UpdateUserPass(user);
+            return  await _userRepository.UpdateUserPass(user);
         }
 
-        public async Task CreateUserAsync(string username, string password, string role)
+        public async Task<bool> CreateUserAsync(string username, string password, string role)
         {
             var passwordHash = HashPasword(password, out var salt);
             var user = new User(username, passwordHash, role, salt, true);
-            await _userRepository.AddUserAsync(user);
+            return await _userRepository.AddUserAsync(user);
         }
 
         public async Task<NewUserModel> GetUser(string username, string password)

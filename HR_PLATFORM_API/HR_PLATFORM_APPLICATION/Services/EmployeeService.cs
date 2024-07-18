@@ -22,7 +22,6 @@ namespace HR_PLATFORM_APPLICATION.Services
                 employeeModel.Birthday,
                 employeeModel.Address,
                 employeeModel.Email,
-                employeeModel.CodEmployee,
                 employeeModel.PhoneNumber,
                 employeeModel.Department,
                 employeeModel.Function,
@@ -30,6 +29,7 @@ namespace HR_PLATFORM_APPLICATION.Services
                 employeeModel.ContractDate,
                 employeeModel.Studied,
                 employeeModel.OperatorHR,
+                employeeModel.CodEmployee,
                 employeeModel.StatutEmployee);
 
             await _employeeRepository.AddEmployee(employee);

@@ -23,7 +23,8 @@ namespace HR_PLATFORM_DOMAIN.Entity.Employee
         public string OperatorHR { get;  set; }
         public bool StatutEmployee { get; set; }
 
-        public Employee(string firstName, string lastName, DateTime birthday, string address, string email, int codEmployee, decimal phoneNumber, string department, string function, int contractCode, DateTime contractDate, string studied, string operatorHR, bool statutEmployee)
+        public Employee() { }
+        public Employee(string firstName, string lastName, DateTime birthday, string address, string email, decimal phoneNumber, string department, string function, int contractCode, DateTime contractDate, string studied, string operatorHR, int codEmployee, bool statutEmployee)
         {
             FirstName = firstName;
             LastName = lastName;

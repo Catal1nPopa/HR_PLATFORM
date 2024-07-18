@@ -1,108 +1,93 @@
-﻿using HR_PLATFORM_DOMAIN.Entity.Employee;
+﻿using Dapper;
+using HR_PLATFORM_DOMAIN.Entity.Employee;
 using HR_PLATFORM_DOMAIN.Interface;
 using HR_PLATFORM_INFRASTRUCTURE.DbContext;
-using HR_PLATFORM_INFRASTRUCTURE.Entities;
-using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
 {
-    public class EmployeeRepository : IEmployeeRepository
+    public class EmployeeRepository(DapperContext dapperContext) : IEmployeeRepository
     {
-        private readonly ApplicationDbContext _context;
-        public EmployeeRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly DapperContext _dapperContext = dapperContext;
 
-        public async Task AddEmployee(Employee employee)
+        public async Task<bool> AddEmployee(Employee employee)
         {
-            var employeeEntity = new EmployeeEntity
+            var query = "INSERT INTO Employees (FirstName, LastName, Birthday, Address, Email, PhoneNumber, Department," +
+                "[Function], ContractCode, ContractDate, Studied, OperatorHR, CodEmployee, StatutEmployee) " +
+                "VALUES (@FirstName, @LastName, @Birthday, @Address, @Email, @PhoneNumber, @Departament, " +
+                "@Function, @ContractCode, @ContractDate, @Studied, @OperatorHR, @CodEmployee, @StatutEmployee)";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("FirstName", employee.FirstName, DbType.String);
+            parameters.Add("LastName", employee.LastName, DbType.String);
+            parameters.Add("Birthday", employee.Birthday, DbType.String);
+            parameters.Add("Address", employee.Address, DbType.String);
+            parameters.Add("Email", employee.Email, DbType.String);
+            parameters.Add("PhoneNumber", employee.PhoneNumber, DbType.Decimal);
+            parameters.Add("Departament", employee.Department, DbType.String);
+            parameters.Add("Function", employee.Function, DbType.String);
+            parameters.Add("ContractCode", employee.ContractCode, DbType.Decimal);
+            parameters.Add("ContractDate", employee.ContractDate, DbType.DateTime);
+            parameters.Add("Studied", employee.Studied, DbType.String);
+            parameters.Add("OperatorHR", employee.OperatorHR, DbType.String);
+            parameters.Add("CodEmployee", employee.CodEmployee, DbType.Int64);
+            parameters.Add("StatutEmployee", employee.StatutEmployee, DbType.Boolean);
+
+            using (var connection = _dapperContext.CreateConnection())
             {
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                Birthday = employee.Birthday,
-                Address = employee.Address,
-                Email = employee.Email,
-                CodEmployee = employee.CodEmployee,
-                PhoneNumber = employee.PhoneNumber,
-                Department = employee.Department,
-                Function = employee.Function,
-                ContractCode = employee.ContractCode,
-                ContractDate = employee.ContractDate,
-                Studied = employee.Studied,
-                OperatorHR = employee.OperatorHR,
-                StatutEmployee = employee.StatutEmployee,
-            };
-
-            _context.Employees.Add(employeeEntity);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<Employee> GetEmployeeByIdAsync(int id)
-        {
-            var employeeEntity = await _context.Employees
-                .FirstOrDefaultAsync(e => e.CodEmployee == id);
-            if (employeeEntity == null)
-            {
-                return null;
+                await connection.ExecuteAsync(query, parameters);
+                return true;
             }
-
-            return new Employee
-            (
-                employeeEntity.FirstName,
-                employeeEntity.LastName,
-                employeeEntity.Birthday,
-                employeeEntity.Address,
-                employeeEntity.Email,
-                employeeEntity.CodEmployee,
-                employeeEntity.PhoneNumber,
-                employeeEntity.Department,
-                employeeEntity.Function,
-                employeeEntity.ContractCode,
-                employeeEntity.ContractDate,
-                employeeEntity.Studied,
-                    employeeEntity.OperatorHR,
-                    employeeEntity.StatutEmployee
-            );
         }
 
         public async Task<bool> DeleteEmployeeAsync(int id)
         {
-            //var employeeEntity = await _context.Employees.FindAsync(id);
-            var employee = await _context.Employees
-                .FirstOrDefaultAsync(e => e.CodEmployee == id);
+            var query = "DELETE FROM Employees WHERE CodEmployee = @id";
 
-            if (employee == null)
+            using (var connection = _dapperContext.CreateConnection())
             {
-                return false;
+                await connection.ExecuteAsync(query, new { Id = id });
+                return true;
             }
+        }
 
-            _context.Employees.Remove(employee);
-            await _context.SaveChangesAsync();
-            return true;
+        public async Task<Employee> GetEmployeeByIdAsync(int codAngajat)
+        {
+            var query = "SELECT FirstName,LastName,Birthday,[Address],Email,PhoneNumber,Department,[Function],ContractCode,ContractDate,Studied,OperatorHR,CodEmployee,StatutEmployee FROM Employees WHERE CodEmployee = @codAngajat";
+
+            using (var connection = _dapperContext.CreateConnection())
+            {
+                var dom = await connection.QuerySingleOrDefaultAsync<Employee>(query, new { codAngajat });
+                return dom;
+            }
         }
 
         public async Task<bool> UpdateEmployeeAsync(int id, Employee employee)
         {
-            var employeeEntity = await _context.Employees.FindAsync(id);
-            if (employeeEntity == null)
+            var checkEmployee = await GetEmployeeByIdAsync(id);
+            if(checkEmployee == null)
             {
                 return false;
             }
 
-            employeeEntity.FirstName = employee.FirstName;
-            employeeEntity.Address = employee.Address;
-            employeeEntity.Email = employee.Email;
-            employeeEntity.CodEmployee = employee.CodEmployee;
-            employeeEntity.PhoneNumber = employee.PhoneNumber;
-            employeeEntity.Department = employee.Department;
-            employeeEntity.Function = employee.Function;
-            employeeEntity.ContractCode = employee.ContractCode;
-            employeeEntity.Studied = employee.Studied;
-            employeeEntity.StatutEmployee = employee.StatutEmployee;
+            var query = "UPDATE Employees SET FirstName = @FirstName, Address = @Address, Email = @Email," +
+                "PhoneNumber = @PhoneNumber, Departament = @Departament, Function = @Function," +
+                "Studied = @Studied, StatutEmployee = @StatutEmployee WHERE CodEmployee = @id";
+            var parameters = new DynamicParameters();
+            parameters.Add("FirstName", employee.FirstName, DbType.String);
+            parameters.Add("Address", employee.LastName, DbType.String);
+            parameters.Add("Email", employee.Email, DbType.String);
+            parameters.Add("PhoneNumber", employee.PhoneNumber, DbType.Decimal);
+            parameters.Add("Departament", employee.Department, DbType.String);
+            parameters.Add("Function", employee.Function, DbType.String);
+            parameters.Add("Studied", employee.Studied, DbType.String);
+            parameters.Add("StatutEmployee", employee.StatutEmployee, DbType.Boolean);
 
-            await _context.SaveChangesAsync();
-            return true;
+            using (var connection = _dapperContext.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, parameters);
+                return true;
+            }
         }
     }
 }
