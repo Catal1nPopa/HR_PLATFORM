@@ -33,13 +33,21 @@ namespace HR_PLATFORM.Controllers.Auth
                 }
                 _logger.LogInformation($"User Authorized {loginDto.Username} on Login Controller");
                 //LogContext.PushProperty("User Authorized", loginDto.Username);
-                return Ok(new { token = authResult.Token, message = "Logare cu succes", status = "success" });
+                return Ok(authResult.Token);
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Exception: {ex.Message}, on Login method");
                 return BadRequest(new { ex.Message, status = "error"});
             }
+        }
+
+        [Authorize(Policy = "admin")]
+        [HttpGet]
+        [Route("test")]
+        public async Task<String> getTest()
+        {
+            return "test";
         }
 
         [Authorize(Policy = "admin")]
