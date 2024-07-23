@@ -42,7 +42,7 @@ namespace HR_PLATFORM.Controllers.Auth
             }
         }
 
-        [Authorize(Policy = "admin")]
+        //[Authorize(Policy = "admin")]
         [HttpGet]
         [Route("test")]
         public async Task<String> getTest()

@@ -13,7 +13,9 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { useTheme, Button } from "@mui/material";
 import LoginPage from "./Components/Auth/Loginpage";
 import MainPage from "./Components/Main/MainPage";
-
+import ProfilePage from "./Components/User/ProfilePage";
+import VacationPage from "./Components/User/VacationPage";
+import Layout from "./Components/Layout/Layout";
 function App() {
   const [toggleDarkMode, setToggleDarkMode] = useState(true);
 
@@ -70,9 +72,7 @@ function App() {
     <>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        {/* <Switch checked={toggleDarkMode} onChange={toggleDarkTheme} /> */}
         <Routes>
-          <Route path='/' element={<MainPage />} />
           <Route
             path='/login'
             element={
@@ -82,8 +82,22 @@ function App() {
               />
             }
           />
+          <Route
+            path='*'
+            element={
+              <Layout
+                darkMode={toggleDarkMode}
+                toggleDarkTheme={toggleDarkTheme}
+              >
+                <Routes>
+                  <Route path='/home' element={<MainPage />} />
+                  <Route path='/userprofile' element={<ProfilePage />} />
+                  <Route path='/uservacation' element={<VacationPage />} />
+                </Routes>
+              </Layout>
+            }
+          />
         </Routes>
-        {/* <SwitchLanguage /> */}
       </ThemeProvider>
     </>
   );

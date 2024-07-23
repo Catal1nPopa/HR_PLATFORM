@@ -58,7 +58,7 @@ const LoginPage = ({ darkMode, toggleDarkTheme }) => {
         const data = await response.text();
         localStorage.setItem("token", data);
 
-        navigate("/");
+        navigate("/home");
         console.log("Login successful:", data);
       } else {
         console.error("Login failes: ", response.statusText);
@@ -139,7 +139,7 @@ const LoginPage = ({ darkMode, toggleDarkTheme }) => {
                 fullWidth
                 variant='contained'
                 sx={{ mt: 3, mb: 2 }}
-                type='submit' // Asigură-te că butonul trimite formularul
+                type='submit'
               >
                 {t("Login")}
               </Button>
