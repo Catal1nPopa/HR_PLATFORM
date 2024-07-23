@@ -9,13 +9,15 @@ import SwitchLanguage from "./Translate/SwitchLanguage";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
-
+import { AuthProvider } from "./Components/Auth/AuthContext";
 import { useTheme, Button } from "@mui/material";
 import LoginPage from "./Components/Auth/Loginpage";
 import MainPage from "./Components/Main/MainPage";
 import ProfilePage from "./Components/User/ProfilePage";
 import VacationPage from "./Components/User/VacationPage";
 import Layout from "./Components/Layout/Layout";
+import PrivateRoute from "./PrivateRoute";
+
 function App() {
   const [toggleDarkMode, setToggleDarkMode] = useState(true);
 
@@ -72,32 +74,55 @@ function App() {
     <>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <Routes>
-          <Route
-            path='/login'
-            element={
-              <LoginPage
-                darkMode={toggleDarkMode}
-                toggleDarkTheme={toggleDarkTheme}
-              />
-            }
-          />
-          <Route
-            path='*'
-            element={
-              <Layout
-                darkMode={toggleDarkMode}
-                toggleDarkTheme={toggleDarkTheme}
-              >
-                <Routes>
-                  <Route path='/home' element={<MainPage />} />
-                  <Route path='/userprofile' element={<ProfilePage />} />
-                  <Route path='/uservacation' element={<VacationPage />} />
-                </Routes>
-              </Layout>
-            }
-          />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route
+              path='/login'
+              element={
+                <LoginPage
+                  darkMode={toggleDarkMode}
+                  toggleDarkTheme={toggleDarkTheme}
+                />
+              }
+            />
+            <Route
+              path='*'
+              element={
+                <Layout
+                  darkMode={toggleDarkMode}
+                  toggleDarkTheme={toggleDarkTheme}
+                >
+                  <Routes>
+                    <Route
+                      path='/home'
+                      element={
+                        <PrivateRoute>
+                          <MainPage />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route
+                      path='/userprofile'
+                      element={
+                        <PrivateRoute>
+                          <ProfilePage />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route
+                      path='/uservacation'
+                      element={
+                        <PrivateRoute>
+                          <VacationPage />
+                        </PrivateRoute>
+                      }
+                    />
+                  </Routes>
+                </Layout>
+              }
+            />
+          </Routes>
+        </AuthProvider>
       </ThemeProvider>
     </>
   );
