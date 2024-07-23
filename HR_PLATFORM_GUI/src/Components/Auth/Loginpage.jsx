@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { Brightness4, Brightness7 } from "@mui/icons-material";
 import black_mode from "../../assets/Login/black_mode.jpg";
 import white_mode from "../../assets/Login/white_mode.jpg";
+import useAuth from "./UseAuth";
 
 const StyledContainer = styled(Container, {
   shouldForwardProp: (prop) => prop !== "darkMode",
@@ -34,7 +35,7 @@ const LoginPage = ({ darkMode, toggleDarkTheme }) => {
   const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const { setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const loginMethod = async () => {
@@ -57,7 +58,7 @@ const LoginPage = ({ darkMode, toggleDarkTheme }) => {
       if (response.ok) {
         const data = await response.text();
         localStorage.setItem("token", data);
-
+        setIsAuthenticated(true);
         navigate("/home");
         console.log("Login successful:", data);
       } else {

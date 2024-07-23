@@ -49,7 +49,7 @@ namespace HR_PLATFORM_APPLICATION.Services
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = identity,
-                Expires = DateTime.Now.AddMinutes(1),
+                Expires = DateTime.Now.AddMinutes(30),
                 SigningCredentials = credentials
             };
             var token = jwtHandler.CreateToken(tokenDescriptor);

@@ -20,6 +20,8 @@ import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import SwitchLanguage from "../../Translate/SwitchLanguage";
 import { Brightness4, Brightness7 } from "@mui/icons-material";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -90,6 +92,12 @@ const Drawer = styled(MuiDrawer, {
 const Layout = ({ children, darkMode, toggleDarkTheme }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+
+  const navigate = useNavigate();
+
+  const Test = () => {
+    navigate("/userprofile");
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -189,6 +197,7 @@ const Layout = ({ children, darkMode, toggleDarkTheme }) => {
             </ListItem>
           ))}
         </List>
+        <Button onClick={Test}>PROFILE</Button>
       </Drawer>
       <Box component='main' sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />

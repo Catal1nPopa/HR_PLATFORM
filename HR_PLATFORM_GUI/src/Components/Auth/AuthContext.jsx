@@ -6,6 +6,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,22 +17,43 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
       } else {
         localStorage.removeItem("token");
-        navigate("/login");
+        //navigate("/login");
       }
-    } else {
-      navigate("/login");
     }
-  }, [navigate]);
+    //    else {
+    //     navigate("/login");
+    //   }
+    // }, [navigate]);
+    setIsAuthChecked(true);
+  }, []);
+
+  // const checkTokenValidity = (token) => {
+  //   // Implementați logica pentru a verifica dacă tokenul este valid și nu a expirat
+  //   const tokenData = JSON.parse(atob(token.split(".")[1]));
+  //   const expirationDate = tokenData.exp * 1000;
+  //   return Date.now() < expirationDate;
+  // };
 
   const checkTokenValidity = (token) => {
-    // Implementați logica pentru a verifica dacă tokenul este valid și nu a expirat
-    const tokenData = JSON.parse(atob(token.split(".")[1]));
-    const expirationDate = tokenData.exp * 1000;
-    return Date.now() < expirationDate;
+    try {
+      const tokenData = JSON.parse(atob(token.split(".")[1]));
+      const expirationDate = tokenData.exp * 1000;
+      return Date.now() < expirationDate;
+    } catch (e) {
+      return false;
+    }
   };
 
+  //   return (
+  //     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+  //       {children}
+  //     </AuthContext.Provider>
+  //   );
+  // };
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, setIsAuthenticated, isAuthChecked }}
+    >
       {children}
     </AuthContext.Provider>
   );

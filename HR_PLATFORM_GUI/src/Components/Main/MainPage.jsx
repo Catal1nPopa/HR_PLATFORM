@@ -46,6 +46,7 @@ const MainPage = () => {
         {t("HomePage")}
       </Typography>
       <p>Aici sunt datele necesare pentru pagina principală.</p>
+      <button onClick={check}> check</button>
     </div>
   );
 };
