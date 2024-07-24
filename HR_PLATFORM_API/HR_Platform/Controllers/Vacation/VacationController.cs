@@ -1,6 +1,7 @@
 ﻿using HR_PLATFORM.DTOs.Vacation;
 using HR_PLATFORM_APPLICATION.Interface;
 using HR_PLATFORM_APPLICATION.Model.Vacation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HR_PLATFORM.Controllers.Vacation
@@ -70,6 +71,7 @@ namespace HR_PLATFORM.Controllers.Vacation
             catch { return BadRequest(new {StatusCode = "error"}); }    
         }
 
+        //[Authorize(Policy = "admin")]
         [HttpGet("GetVacationsEmployees")]
         public async Task<List<VacationModel>> GetVacationsEmployees()
         {

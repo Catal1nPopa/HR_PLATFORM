@@ -16,14 +16,51 @@ const SwitchLanguage = () => {
   };
 
   return (
-    <FormControl variant='standard' sx={{ m: 1, minWidth: 120 }}>
-      <InputLabel id='language-select-label'>{t("Language")}</InputLabel>
+    <FormControl variant='outlined' sx={{ m: 1, minWidth: 120 }}>
       <Select
-        labelId='language-select-label'
         id='language-select'
         value={language}
         onChange={handleChange}
-        label='Language'
+        displayEmpty
+        renderValue={(selected) => {
+          if (selected === "en") {
+            return (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src={gbFlag}
+                  alt='GB Flag'
+                  width='20'
+                  height='15'
+                  style={{ marginRight: 8 }}
+                />
+                English
+              </div>
+            );
+          }
+          if (selected === "ro") {
+            return (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src={roFlag}
+                  alt='Romanian Flag'
+                  width='20'
+                  height='15'
+                  style={{ marginRight: 8 }}
+                />
+                Română
+              </div>
+            );
+          }
+          return <span>Select Language</span>;
+        }}
+        sx={{
+          "& .MuiOutlinedInput-notchedOutline": {
+            border: "none",
+          },
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            border: "none",
+          },
+        }}
       >
         <MenuItem value='en'>
           <img
@@ -49,5 +86,4 @@ const SwitchLanguage = () => {
     </FormControl>
   );
 };
-
 export default SwitchLanguage;

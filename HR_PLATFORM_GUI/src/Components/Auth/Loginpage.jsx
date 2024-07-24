@@ -103,11 +103,17 @@ const LoginPage = ({ darkMode, toggleDarkTheme }) => {
               borderRadius: 5,
             }}
           >
-            <Box>
-              <Typography variant='h5'>{t("LoginPage")}</Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
               <IconButton onClick={toggleDarkTheme}>
                 {darkMode ? <Brightness7 /> : <Brightness4 />}
               </IconButton>
+              <Typography variant='h5'>{t("LoginPage")}</Typography>
             </Box>
             <form onSubmit={handleSubmit}>
               <TextField

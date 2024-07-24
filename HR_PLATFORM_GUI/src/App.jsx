@@ -112,9 +112,9 @@ function App() {
                     <Route
                       path='/uservacation'
                       element={
-                        // <PrivateRoute>
-                        <VacationPage />
-                        // </PrivateRoute>
+                        <PrivateRoute>
+                          <VacationPage />
+                        </PrivateRoute>
                       }
                     />
                   </Routes>
