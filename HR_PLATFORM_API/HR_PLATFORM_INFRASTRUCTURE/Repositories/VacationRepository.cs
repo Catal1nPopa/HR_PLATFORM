@@ -16,7 +16,7 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
                 "VALUES(@TypeVacation, @VacationDaysLeft, @DaysVacation, @CodEmployee,@EndDate, @StartDate)";
 
             var parameters = new DynamicParameters();
-            parameters.Add("TypeVacation", vacation.TypeVacation, DbType.String);
+            parameters.Add("TypeVacation", vacation.TypeVacation, DbType.Int64);
             parameters.Add("VacationDaysLeft", vacation.VacationDaysLeft, DbType.Int64);
             parameters.Add("DaysVacation", vacation.DaysVacation, DbType.Int64);
             parameters.Add("CodEmployee", vacation.CodEmployee, DbType.Int64);
@@ -26,6 +26,7 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
             using (var connection = _dapperContext.CreateConnection())
             {
                 await connection.ExecuteAsync(query, parameters);
+                connection.Close();
             }
         }
 
@@ -35,7 +36,9 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
 
             using (var connection = _dapperContext.CreateConnection())
             {
-                return (await connection.QueryAsync<Vacation>(query)).ToList();
+                var result = (await connection.QueryAsync<Vacation>(query)).ToList();
+                connection.Close();
+                return result;
             }
         }
 
@@ -49,7 +52,9 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
 
             using (var connection = _dapperContext.CreateConnection())
             {
-                return (await connection.QueryAsync<Vacation>(query, parameters)).ToList();
+                var result = (await connection.QueryAsync<Vacation>(query, parameters)).ToList();
+                connection.Close();
+                return result;
             }
         }
 
@@ -60,7 +65,9 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
             var query = "SELECT Id, TypeVacation, VacationDaysLeft, DaysVacation, CodEmployee, EndDate, StartDate FROM Vacations WHERE Id = @codVacation";
             using (var connection = _dapperContext.CreateConnection())
             {
-                return await connection.QuerySingleOrDefaultAsync<Vacation>(query, new { codVacation });
+                var result = ( await connection.QuerySingleOrDefaultAsync<Vacation>(query, new { codVacation }));
+                connection.Close();
+                return result;
             }
         }
 
@@ -81,6 +88,7 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
             using (var connection = _dapperContext.CreateConnection())
             {
                 await connection.ExecuteAsync(query, parameters);
+                connection.Close();
                 return true;
             }
         }

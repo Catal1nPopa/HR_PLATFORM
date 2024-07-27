@@ -1,7 +1,9 @@
 ﻿using HR_PLATFORM_APPLICATION.Interface;
 using HR_PLATFORM_APPLICATION.Model.Auth;
+using HR_PLATFORM_APPLICATION.Model.Vacation;
 using HR_PLATFORM_DOMAIN.Entity.Auth;
 using HR_PLATFORM_DOMAIN.Interface;
+using HR_PLATFORM_INFRASTRUCTURE.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,11 +13,12 @@ using System.Text;
 
 namespace HR_PLATFORM_APPLICATION.Services
 {
-    public class AuthService(IUserRepository userRepository, IConfiguration configuration)
+    public class AuthService(IUserRepository userRepository, IConfiguration configuration, IEmployeeRepository employeeRepository)
         : IAuthService
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IConfiguration _configuration = configuration;
+        private readonly IEmployeeRepository _employeeRepository = employeeRepository;
 
         public async Task<AuthResult> AuthenticateAsync(string username, string password)
         {
@@ -60,17 +63,22 @@ namespace HR_PLATFORM_APPLICATION.Services
             };
         }
 
-        public async Task<bool> ChangeUserPassword(string username, string password)
+        public async Task<bool> ChangeUserPassword(string username, string password, string codeEmployee)
         {
             var passwordHash = HashPasword(password, out var salt);
-            var user = new User(username, passwordHash, "none", salt, false);
+            var user = new User(username, passwordHash, "none", salt, false, codeEmployee);
             return  await _userRepository.UpdateUserPass(user);
         }
 
-        public async Task<bool> CreateUserAsync(string username, string password, string role)
+        public async Task<bool> CreateUserAsync(string username, string password, string role, int codeEmployee)
         {
+            var checkEmployee = await _employeeRepository.GetEmployeeByIdAsync(codeEmployee);
+            if (checkEmployee == null)
+            {
+                return false;
+            }
             var passwordHash = HashPasword(password, out var salt);
-            var user = new User(username, passwordHash, role, salt, true);
+            var user = new User(username, passwordHash, role, salt, true, codeEmployee.ToString());
             return await _userRepository.AddUserAsync(user);
         }
 
@@ -87,6 +95,20 @@ namespace HR_PLATFORM_APPLICATION.Services
                 user.FirstLogin
                 );
             return userModel;
+        }
+
+        public async Task<List<UsersModel>> GetUsers()
+        {
+            var users = await _userRepository.GetUsers();
+
+            var usersModels = users.Select(v => new UsersModel
+            {
+                username = v.Username,
+                codeEmployee = v.CodeEmployee,
+                firstLogin = v.FirstLogin,
+            }).ToList();
+
+            return usersModels;
         }
 
         string HashPasword(string password, out byte[] salt)

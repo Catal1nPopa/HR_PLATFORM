@@ -13,7 +13,6 @@ namespace HR_PLATFORM_APPLICATION.Model.Employee
         public DateTime Birthday { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
-        public int CodEmployee {  get; set; }
         public decimal PhoneNumber { get; set; }
         public string Department { get; set; }
         public string Function { get; set; }

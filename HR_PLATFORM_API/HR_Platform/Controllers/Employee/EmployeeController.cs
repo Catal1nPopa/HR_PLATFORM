@@ -1,8 +1,6 @@
 ﻿using HR_PLATFORM.DTOs.Employee;
 using HR_PLATFORM_APPLICATION.Interface;
 using HR_PLATFORM_APPLICATION.Model.Employee;
-using HR_PLATFORM_DOMAIN.Entity.Employee;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HR_PLATFORM.Controllers.Employee
@@ -26,7 +24,6 @@ namespace HR_PLATFORM.Controllers.Employee
                     Birthday = addEmployeeDto.Birthday,
                     Address = addEmployeeDto.Address,
                     Email = addEmployeeDto.Email,
-                    CodEmployee = addEmployeeDto.CodEmployee,
                     PhoneNumber = addEmployeeDto.PhoneNumber,
                     Department = addEmployeeDto.Department,
                     Function = addEmployeeDto.Function,
@@ -64,7 +61,6 @@ namespace HR_PLATFORM.Controllers.Employee
                 Birthday = employee.Birthday,
                 Address = employee.Address,
                 Email = employee.Email,
-                CodEmployee = employee.CodEmployee,
                 PhoneNumber = employee.PhoneNumber,
                 Department = employee.Department,
                 Function = employee.Function,
@@ -104,7 +100,7 @@ namespace HR_PLATFORM.Controllers.Employee
         {
             try
             {
-                var employeeDto = new EmployeeModel
+                var employeeDto = new EmployeeModelUpdate
                 {
                     FirstName = employee.FirstName,
                     Address = employee.Address,
@@ -132,6 +128,8 @@ namespace HR_PLATFORM.Controllers.Employee
                 return BadRequest();
             }
         }
+
+
 
     }
 }

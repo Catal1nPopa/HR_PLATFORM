@@ -8,6 +8,6 @@ namespace HR_PLATFORM_APPLICATION.Interface
         Task AddEmployee(EmployeeModel employeeModel);
         Task<EmployeeModel> GetEmployeeByIdAsync(int codAngajat);
         Task<bool> DeleteEmployeeAsync(int id);
-        Task<bool> UpdateEmployeeAsync(int id, EmployeeModel employee);
+        Task<bool> UpdateEmployeeAsync(int id, EmployeeModelUpdate employee);
     }
 }

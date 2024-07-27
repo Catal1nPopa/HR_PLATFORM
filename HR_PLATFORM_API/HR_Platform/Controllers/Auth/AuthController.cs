@@ -1,5 +1,6 @@
 ﻿using HR_PLATFORM.DTOs.Auth;
 using HR_PLATFORM_APPLICATION.Interface;
+using HR_PLATFORM_APPLICATION.Model.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -50,14 +51,21 @@ namespace HR_PLATFORM.Controllers.Auth
             return "test";
         }
 
-        [Authorize(Policy = "admin")]
+        [HttpGet]
+        [Route("Users")]
+        public async Task<List<UsersModel>> getUsers()
+        {
+            return await _authService.GetUsers();
+        }
+
+        //[Authorize(Policy = "admin")]
         [HttpPost]
         [Route("addLogin")]
         public async Task<IActionResult> AddEmployeeLogin([FromBody] AddNewLogin registerDto)
         {
             try
             {
-                var response = await _authService.CreateUserAsync(registerDto.Username, registerDto.Password, registerDto.Role);
+                var response = await _authService.CreateUserAsync(registerDto.Username, registerDto.Password, registerDto.Role, registerDto.codeEmployee);
                 if (response)
                 {
                     _logger.LogInformation($"New user created: Username: {registerDto.Username}, Role: {registerDto.Role}");
@@ -76,13 +84,13 @@ namespace HR_PLATFORM.Controllers.Auth
         }
 
         //[Authorize]
-        [HttpGet]
+        [HttpPatch]
         [Route("ChangePassword")]
-        public async Task<IActionResult> ChangePassword(string username, string newPassword)
+        public async Task<IActionResult> ChangePassword(string username, string newPassword, string codeEmployee)
         {
             try
             {
-                var result = await _authService.ChangeUserPassword(username, newPassword);
+                var result = await _authService.ChangeUserPassword(username, newPassword, codeEmployee);
                 if(result)
                 {
                     _logger.LogInformation($"Changed password: {username}");

@@ -41,5 +41,21 @@ namespace HR_PLATFORM_DOMAIN.Entity.Employee
             OperatorHR = operatorHR;
             StatutEmployee = statutEmployee;
         }
+        public Employee(string firstName, string lastName, DateTime birthday, string address, string email, decimal phoneNumber, string department, string function, int contractCode, DateTime contractDate, string studied, string operatorHR, bool statutEmployee)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Birthday = birthday;
+            Address = address;
+            Email = email;
+            PhoneNumber = phoneNumber;
+            Department = department;
+            Function = function;
+            ContractCode = contractCode;
+            ContractDate = contractDate;
+            Studied = studied;
+            OperatorHR = operatorHR;
+            StatutEmployee = statutEmployee;
+        }
     }
 }

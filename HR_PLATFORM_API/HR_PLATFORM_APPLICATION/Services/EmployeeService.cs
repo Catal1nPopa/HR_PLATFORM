@@ -29,7 +29,6 @@ namespace HR_PLATFORM_APPLICATION.Services
                 employeeModel.ContractDate,
                 employeeModel.Studied,
                 employeeModel.OperatorHR,
-                employeeModel.CodEmployee,
                 employeeModel.StatutEmployee);
 
             await _employeeRepository.AddEmployee(employee);
@@ -50,7 +49,6 @@ namespace HR_PLATFORM_APPLICATION.Services
                 Birthday = employee.Birthday,
                 Address = employee.Address,
                 Email = employee.Email,
-                CodEmployee = employee.CodEmployee,
                 PhoneNumber = employee.PhoneNumber,
                 Department = employee.Department,
                 Function = employee.Function,
@@ -66,22 +64,22 @@ namespace HR_PLATFORM_APPLICATION.Services
         {
             return await _employeeRepository.DeleteEmployeeAsync(id);
         }
-        public async Task<bool> UpdateEmployeeAsync(int id, EmployeeModel updateEmployeeDto)
+        public async Task<bool> UpdateEmployeeAsync(int id, EmployeeModelUpdate updateEmployeeDto)
         {
             var existingEmployee = await _employeeRepository.GetEmployeeByIdAsync(id);
             if (existingEmployee == null)
             {
                 return false;
             }
-            if (updateEmployeeDto.FirstName != null)
+            if (updateEmployeeDto.FirstName != null && !updateEmployeeDto.FirstName.Equals("string"))
             {
                 existingEmployee.FirstName = updateEmployeeDto.FirstName;
             }
-            if (updateEmployeeDto.Address != null)
+            if (updateEmployeeDto.Address != null && !updateEmployeeDto.Address.Equals("string"))
             {
                 existingEmployee.Address = updateEmployeeDto.Address;
             }
-            if (updateEmployeeDto.Email != null)
+            if (updateEmployeeDto.Email != null && !updateEmployeeDto.Email.Equals("string"))
             {
                 existingEmployee.Email = updateEmployeeDto.Email;
             }
@@ -93,11 +91,11 @@ namespace HR_PLATFORM_APPLICATION.Services
             {
                 existingEmployee.PhoneNumber = updateEmployeeDto.PhoneNumber;
             }
-            if (updateEmployeeDto.Department != null)
+            if (updateEmployeeDto.Department != null && !updateEmployeeDto.Department.Equals("string"))
             {
                 existingEmployee.Department = updateEmployeeDto.Department;
             }
-            if (updateEmployeeDto.Function != null)
+            if (updateEmployeeDto.Function != null && !updateEmployeeDto.Function.Equals("string"))
             {
                 existingEmployee.Function= updateEmployeeDto.Function;
             }
@@ -105,7 +103,7 @@ namespace HR_PLATFORM_APPLICATION.Services
             {
                 existingEmployee.ContractCode = updateEmployeeDto.ContractCode;
             }
-            if (updateEmployeeDto.Studied != null)
+            if (updateEmployeeDto.Studied != null && !updateEmployeeDto.Studied.Equals("string"))
             {
                 existingEmployee.Studied = updateEmployeeDto.Studied;
             }

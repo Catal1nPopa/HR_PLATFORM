@@ -9,5 +9,6 @@ namespace HR_PLATFORM_DOMAIN.Interface
         Task<Employee> GetEmployeeByIdAsync(int codAngajat);
         Task<bool> DeleteEmployeeAsync(int id);
         Task<bool> UpdateEmployeeAsync(int id,Employee employee);
+        Task<List<Employee>> GetEmployees();
     }
 }

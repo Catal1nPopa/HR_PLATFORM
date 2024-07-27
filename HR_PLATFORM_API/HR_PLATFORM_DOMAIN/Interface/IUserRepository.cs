@@ -10,6 +10,7 @@ namespace HR_PLATFORM_DOMAIN.Interface
     public interface IUserRepository
     {
         Task<User> GetUserByUsername(string username);
+        Task<List<User>> GetUsers();
         Task<bool> AddUserAsync(User user);
         Task<bool> UpdateUserPass(User user);
     }
