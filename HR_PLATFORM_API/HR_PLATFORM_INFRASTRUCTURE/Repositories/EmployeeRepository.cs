@@ -77,6 +77,7 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
             }
         }
 
+
         public async Task<bool> UpdateEmployeeAsync(int id, Employee employee)
         {
             var checkEmployee = await GetEmployeeByIdAsync(id);

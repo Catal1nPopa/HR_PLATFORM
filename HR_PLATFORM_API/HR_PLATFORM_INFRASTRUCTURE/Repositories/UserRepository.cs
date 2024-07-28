@@ -50,6 +50,16 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
             }
         }
 
+        public async Task DeleteUserLogin(string username)
+        {
+            var query = "DELETE FROM Users WHERE USERNAME = @username";
+
+            using( var connection = _dapperContext.CreateConnection())
+            { 
+                await connection.ExecuteAsync(query, new { username });
+            }
+        }
+
         public async Task<List<User>> GetUsers()
         {
             var query = "SELECT * FROM Users";

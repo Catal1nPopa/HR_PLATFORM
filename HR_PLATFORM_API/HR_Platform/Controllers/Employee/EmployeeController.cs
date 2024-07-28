@@ -1,5 +1,6 @@
 ﻿using HR_PLATFORM.DTOs.Employee;
 using HR_PLATFORM_APPLICATION.Interface;
+using HR_PLATFORM_APPLICATION.Model.Auth;
 using HR_PLATFORM_APPLICATION.Model.Employee;
 using Microsoft.AspNetCore.Mvc;
 
@@ -92,6 +93,21 @@ namespace HR_PLATFORM.Controllers.Employee
             {
                 _logger.LogError($"Exception: {ex.Message}, on DeleteEmployee method");
                 return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        [Route("GetEmployees")]
+        public async Task<List<EmployeeModel>> GetEmployees()
+        {
+            try
+            {
+                return await _employeeService.GetEmployees();
+
+            }
+            catch
+            {
+                return new List<EmployeeModel>();
             }
         }
 

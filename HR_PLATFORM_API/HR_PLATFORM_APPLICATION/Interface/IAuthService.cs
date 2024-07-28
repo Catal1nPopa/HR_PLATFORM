@@ -14,5 +14,6 @@ namespace HR_PLATFORM_APPLICATION.Interface
         Task<bool> CreateUserAsync(string username, string password, string role, int codeEmployee);
         Task<bool> ChangeUserPassword(string username, string password, string codeEmployee);
         Task<List<UsersModel>> GetUsers();
+        Task DeleteUserLogin(string username);
     }
 }

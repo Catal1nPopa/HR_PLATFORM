@@ -122,5 +122,10 @@ namespace HR_PLATFORM_APPLICATION.Services
                 64); //keySize 
             return Convert.ToHexString(hash);
         }
+
+        public async Task DeleteUserLogin(string username)
+        {
+            await _userRepository.DeleteUserLogin(username);
+        }
     }
 }

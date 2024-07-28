@@ -21,6 +21,9 @@ namespace HR_PLATFORM_APPLICATION.Injections
             Services.AddScoped<IVacationService, VacationService>();
             Services.AddScoped<IVacationRepository, VacationRepository>();
 
+            Services.AddScoped<ICVRepository, CVRepository>();
+            Services.AddScoped<ICVService, CVService>();
+
             return Services;
         }
     }

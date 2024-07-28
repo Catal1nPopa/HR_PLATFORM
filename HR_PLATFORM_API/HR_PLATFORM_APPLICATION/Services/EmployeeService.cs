@@ -1,6 +1,8 @@
 ﻿using HR_PLATFORM_APPLICATION.Interface;
 using HR_PLATFORM_APPLICATION.Model.Employee;
+using HR_PLATFORM_APPLICATION.Model.Vacation;
 using HR_PLATFORM_DOMAIN.Entity.Employee;
+using HR_PLATFORM_DOMAIN.Entity.Vacation;
 using HR_PLATFORM_DOMAIN.Interface;
 
 namespace HR_PLATFORM_APPLICATION.Services
@@ -58,6 +60,29 @@ namespace HR_PLATFORM_APPLICATION.Services
                 Studied = employee.Studied,
                 StatutEmployee = employee.StatutEmployee
             };
+        }
+
+        public async Task<List<EmployeeModel>> GetEmployees()
+        {
+            var result = await _employeeRepository.GetEmployees();
+            var employeesModels = result.Select(v => new EmployeeModel
+            {
+                FirstName = v.FirstName,
+                LastName = v.LastName,
+                Birthday = v.Birthday,
+                Address = v.Address,
+                Email = v.Email,
+                PhoneNumber = v.PhoneNumber,
+                Department = v.Department,
+                Function = v.Function,
+                ContractCode = v.ContractCode,
+                ContractDate = v.ContractDate,
+                OperatorHR = v.OperatorHR,
+                Studied = v.Studied,
+                StatutEmployee = v.StatutEmployee
+            }).ToList();
+
+            return employeesModels;
         }
 
         public async Task<bool> DeleteEmployeeAsync(int id)

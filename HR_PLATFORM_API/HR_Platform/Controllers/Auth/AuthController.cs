@@ -107,5 +107,21 @@ namespace HR_PLATFORM.Controllers.Auth
                 return BadRequest(new { ex.Message, status = "error" });
             }
         }
+
+
+        [HttpDelete]
+        [Route("DeleteLogin")]
+        public async Task<IActionResult> DeleteLogin(string username)
+        {
+            try
+            {
+                await _authService.DeleteUserLogin(username);
+                return Ok();
+            } 
+            catch(Exception ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+        }
     }
 }

@@ -13,5 +13,6 @@ namespace HR_PLATFORM_DOMAIN.Interface
         Task<List<User>> GetUsers();
         Task<bool> AddUserAsync(User user);
         Task<bool> UpdateUserPass(User user);
+        Task DeleteUserLogin(string username);
     }
 }
