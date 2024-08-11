@@ -30,7 +30,8 @@ namespace HR_PLATFORM.Controllers.Auth
                 }
                 if (authResult.IsFirstLogin)
                 {
-                    return Ok(new { status = "ChangePass" });
+                    //return Ok(new { status = "ChangePass" });
+                    return StatusCode(410);
                 }
                 _logger.LogInformation($"User Authorized {loginDto.Username} on Login Controller");
                 //LogContext.PushProperty("User Authorized", loginDto.Username);
@@ -86,15 +87,15 @@ namespace HR_PLATFORM.Controllers.Auth
         //[Authorize]
         [HttpPatch]
         [Route("ChangePassword")]
-        public async Task<IActionResult> ChangePassword(string username, string newPassword, string codeEmployee)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePassDTO dataPass)
         {
             try
             {
-                var result = await _authService.ChangeUserPassword(username, newPassword, codeEmployee);
+                var result = await _authService.ChangeUserPassword(dataPass.username, dataPass.password, dataPass.codEmployee);
                 if(result)
                 {
-                    _logger.LogInformation($"Changed password: {username}");
-                    return Ok(new { message = "Schimbă parola pentru utilizatorul: " + username });
+                    _logger.LogInformation($"Changed password: {dataPass.username}");
+                    return Ok(new { message = "Schimbă parola pentru utilizatorul: " + dataPass.username });
                 }
                 else
                 {
