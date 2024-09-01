@@ -21,17 +21,35 @@ namespace HR_PLATFORM_DOMAIN.Entity.Employee
         public DateTime ContractDate { get;  set; }
         public string Studied { get;  set; }
         public string OperatorHR { get;  set; }
+        public int CodeManager { get; set; }
+        public string Grafic { get; set; }
         public bool StatutEmployee { get; set; }
 
         public Employee() { }
-        public Employee(string firstName, string lastName, DateTime birthday, string address, string email, decimal phoneNumber, string department, string function, int contractCode, DateTime contractDate, string studied, string operatorHR, int codEmployee, bool statutEmployee)
+        //public Employee(string firstName, string lastName, DateTime birthday, string address, string email, decimal phoneNumber, string department, string function, int contractCode, DateTime contractDate, string studied, string operatorHR, int codEmployee, bool statutEmployee)
+        //{
+        //    FirstName = firstName;
+        //    LastName = lastName;
+        //    Birthday = birthday;
+        //    Address = address;
+        //    Email = email;
+        //    CodEmployee = codEmployee;
+        //    PhoneNumber = phoneNumber;
+        //    Department = department;
+        //    Function = function;
+        //    ContractCode = contractCode;
+        //    ContractDate = contractDate;
+        //    Studied = studied;
+        //    OperatorHR = operatorHR;
+        //    StatutEmployee = statutEmployee;
+        //}
+        public Employee(string firstName, string lastName, DateTime birthday, string address, string email, decimal phoneNumber, string department, string function, int contractCode, DateTime contractDate, string studied, string operatorHR, int codeManager, bool statutEmployee, string grafic)
         {
             FirstName = firstName;
             LastName = lastName;
             Birthday = birthday;
             Address = address;
             Email = email;
-            CodEmployee = codEmployee;
             PhoneNumber = phoneNumber;
             Department = department;
             Function = function;
@@ -39,23 +57,9 @@ namespace HR_PLATFORM_DOMAIN.Entity.Employee
             ContractDate = contractDate;
             Studied = studied;
             OperatorHR = operatorHR;
+            CodeManager = codeManager;
             StatutEmployee = statutEmployee;
-        }
-        public Employee(string firstName, string lastName, DateTime birthday, string address, string email, decimal phoneNumber, string department, string function, int contractCode, DateTime contractDate, string studied, string operatorHR, bool statutEmployee)
-        {
-            FirstName = firstName;
-            LastName = lastName;
-            Birthday = birthday;
-            Address = address;
-            Email = email;
-            PhoneNumber = phoneNumber;
-            Department = department;
-            Function = function;
-            ContractCode = contractCode;
-            ContractDate = contractDate;
-            Studied = studied;
-            OperatorHR = operatorHR;
-            StatutEmployee = statutEmployee;
+            Grafic = grafic;
         }
     }
 }

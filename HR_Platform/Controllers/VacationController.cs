@@ -4,7 +4,7 @@ using HR_PLATFORM_APPLICATION.Model.Vacation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HR_PLATFORM.Controllers.Vacation
+namespace HR_PLATFORM.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -18,6 +18,7 @@ namespace HR_PLATFORM.Controllers.Vacation
             _employeeService = employeeService;
         }
 
+        //[Authorize]
         [HttpPost("add")]
         public async Task<IActionResult> AddVacation([FromBody] VacationDto vacationDto)
         {
@@ -33,7 +34,9 @@ namespace HR_PLATFORM.Controllers.Vacation
                         EndDate = vacationDto.StartDate.AddDays(vacationDto.DaysVacation),
                         DaysVacation = vacationDto.DaysVacation,
                         VacationDaysLeft = vacationDto.VacationDaysLeft,
-                        TypeVacation = vacationDto.TypeVacation
+                        CodeManager = vacationDto.CodeManager,
+                        TypeVacation = vacationDto.TypeVacation,
+                        Status = vacationDto.Status,
                     };
 
                     await _vacationService.AddVacationAsync(vacationModel);
@@ -47,6 +50,7 @@ namespace HR_PLATFORM.Controllers.Vacation
             }
         }
 
+        [Authorize]
         [HttpPatch("updateVcation")]
         public async Task<IActionResult> UpdateVacation([FromBody] VacationDto vacation)
         {
@@ -63,29 +67,38 @@ namespace HR_PLATFORM.Controllers.Vacation
                     VacationDaysLeft = vacation.VacationDaysLeft
                 };
 
-                var result = await _vacationService.UpdateVacationAsync( vacationDto);
+                var result = await _vacationService.UpdateVacationAsync(vacationDto);
                 if (result) { return Ok(new { message = "Update cu succes", status = "success" }); }
 
                 return BadRequest(new { statut = "error" });
             }
-            catch { return BadRequest(new {StatusCode = "error"}); }    
+            catch { return BadRequest(new { StatusCode = "error" }); }
         }
 
         //[Authorize(Policy = "admin")]
         [HttpGet("GetVacationsEmployees")]
-        public async Task<List<VacationModel>> GetVacationsEmployees()
+        public async Task<IActionResult> GetVacationsEmployees()
         {
-            List<VacationModel> vacationDto = await _vacationService.GetVacationsEmployees();
-            if (vacationDto.Count == 0) { return new List<VacationModel>(); };
-            return vacationDto;
+            try
+            {
+                return Ok(await _vacationService.GetVacationsEmployees());
+            }catch (Exception ex)   
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("GetVacationsEmployee")]
-        public async Task<List<VacationModel>> GetVacationsEmployee(int codeEmployee)
+        public async Task<IActionResult> GetVacationsEmployee(int codeEmployee)
         {
-            var vacations = await _vacationService.GetEmployeeVacations(codeEmployee);
-            if(vacations.Count == 0) { return new List<VacationModel>(); };
-            return vacations;
+            try
+            {
+                return Ok(await _vacationService.GetEmployeeVacations(codeEmployee));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

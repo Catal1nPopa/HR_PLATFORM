@@ -8,6 +8,8 @@
         public DateTime EndDate { get; set; }
         public int DaysVacation { get; set; }
         public int VacationDaysLeft { get; set; }
+        public int CodeManager {  get; set; }
         public string TypeVacation { get; set; }
+        public string Status { get; set; }
     }
 }

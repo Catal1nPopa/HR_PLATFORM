@@ -10,5 +10,9 @@ namespace HR_PLATFORM_DOMAIN.Interface
         Task<bool> DeleteEmployeeAsync(int id);
         Task<bool> UpdateEmployeeAsync(int id,Employee employee);
         Task<List<Employee>> GetEmployees();
+        Task<Image> GetUserImage(int codeEmployee);
+        Task UpdateEmployeeImage(string filename, byte[] fileData, int codeEmployee, string contentType);
+        Task AddEmployeeImage(string filename, byte[] fileData, int codeEmployee, string contentType);
+
     }
 }

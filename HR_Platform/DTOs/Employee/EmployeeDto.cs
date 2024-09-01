@@ -16,6 +16,8 @@
         public DateTime ContractDate { get; set; }
         public string Studied { get; set; }
         public string OperatorHR { get; set; }
+        public int CodeManager { get; set; }
+        public string Grafic { get; set; }
         public bool StatutEmployee { get; set; }
     }
 }

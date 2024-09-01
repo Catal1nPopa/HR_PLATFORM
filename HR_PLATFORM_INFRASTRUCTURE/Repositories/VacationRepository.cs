@@ -3,6 +3,7 @@ using HR_PLATFORM_DOMAIN.Entity.Auth;
 using HR_PLATFORM_DOMAIN.Entity.Vacation;
 using HR_PLATFORM_DOMAIN.Interface;
 using HR_PLATFORM_INFRASTRUCTURE.DbContext;
+using System;
 using System.Data;
 
 namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
@@ -12,8 +13,8 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
         private readonly DapperContext _dapperContext = dapperContext;
         public async Task AddVacation(Vacation vacation)
         {
-            var query = "INSERT INTO Vacations(TypeVacation, VacationDaysLeft, DaysVacation, CodEmployee, EndDate, StartDate)" +
-                "VALUES(@TypeVacation, @VacationDaysLeft, @DaysVacation, @CodEmployee,@EndDate, @StartDate)";
+            var query = "INSERT INTO Vacations(TypeVacation, VacationDaysLeft, DaysVacation, CodEmployee, EndDate, StartDate, CodeManager, Status)" +
+                "VALUES(@TypeVacation, @VacationDaysLeft, @DaysVacation, @CodEmployee,@EndDate, @StartDate, @CodeManager, @Status)";
 
             var parameters = new DynamicParameters();
             parameters.Add("TypeVacation", vacation.TypeVacation, DbType.Int64);
@@ -22,6 +23,8 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
             parameters.Add("CodEmployee", vacation.CodEmployee, DbType.Int64);
             parameters.Add("EndDate", vacation.EndDate, DbType.DateTime);
             parameters.Add("StartDate", vacation.StartDate, DbType.DateTime);
+            parameters.Add("CodeManager", vacation.CodeManager, DbType.Int64);
+            parameters.Add("Status", vacation.Status, DbType.String);
 
             using (var connection = _dapperContext.CreateConnection())
             {
@@ -57,8 +60,6 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
                 return result;
             }
         }
-
-
 
         public async Task<Vacation> GetVacationByIdAsync(int codVacation)
         {

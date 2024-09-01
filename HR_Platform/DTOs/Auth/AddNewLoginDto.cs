@@ -1,6 +1,6 @@
 ﻿namespace HR_PLATFORM.DTOs.Auth
 {
-    public class AddNewLogin
+    public class AddNewLoginDto
     {
         public string Username { get; set; }
         public string Password { get; set; }

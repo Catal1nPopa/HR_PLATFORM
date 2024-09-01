@@ -44,7 +44,7 @@ namespace HR_PLATFORM_APPLICATION.Services
             {
                 new Claim(ClaimTypes.Role, user.Role),
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, user.CodeEmployee)
             });
 
             var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
