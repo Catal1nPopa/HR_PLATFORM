@@ -1,12 +1,6 @@
 ﻿using HR_PLATFORM_APPLICATION.Interface;
 using HR_PLATFORM_APPLICATION.Model.CV;
-using HR_PLATFORM_DOMAIN.Entity.CV;
 using HR_PLATFORM_DOMAIN.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HR_PLATFORM_APPLICATION.Services
 {
@@ -15,7 +9,15 @@ namespace HR_PLATFORM_APPLICATION.Services
         private readonly ICVRepository _cvRepository = cVRepository;
         public async Task AddCV(string fileName, byte[] fileData, int codeEmployee, string contentType)
         {
-            await _cvRepository.AddCV(fileName, fileData, codeEmployee, contentType);
+            var checkCV = await _cvRepository.DownloadCV(codeEmployee);
+            if (checkCV != null)
+            {
+                await _cvRepository.UpdateCV(fileName, fileData, codeEmployee, contentType);
+            }
+            else
+            {
+                await _cvRepository.AddCV(fileName, fileData, codeEmployee, contentType);
+            }
         }
 
         public async Task<CVDownload> DownloadCV(int codeEmployee)

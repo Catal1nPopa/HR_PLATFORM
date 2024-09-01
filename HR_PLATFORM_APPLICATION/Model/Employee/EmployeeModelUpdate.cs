@@ -21,6 +21,7 @@ namespace HR_PLATFORM_APPLICATION.Model.Employee
         public DateTime ContractDate { get; set; }
         public string Studied { get; set; }
         public string OperatorHR { get; set; }
+        public string Grafic { get; set; }
         public bool StatutEmployee { get; set; }
     }
 }

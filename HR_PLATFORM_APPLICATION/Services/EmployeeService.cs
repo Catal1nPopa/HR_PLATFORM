@@ -1,9 +1,11 @@
 ﻿using HR_PLATFORM_APPLICATION.Interface;
+using HR_PLATFORM_APPLICATION.Model.CV;
 using HR_PLATFORM_APPLICATION.Model.Employee;
 using HR_PLATFORM_APPLICATION.Model.Vacation;
 using HR_PLATFORM_DOMAIN.Entity.Employee;
 using HR_PLATFORM_DOMAIN.Entity.Vacation;
 using HR_PLATFORM_DOMAIN.Interface;
+using HR_PLATFORM_INFRASTRUCTURE.Repositories;
 
 namespace HR_PLATFORM_APPLICATION.Services
 {
@@ -31,7 +33,9 @@ namespace HR_PLATFORM_APPLICATION.Services
                 employeeModel.ContractDate,
                 employeeModel.Studied,
                 employeeModel.OperatorHR,
-                employeeModel.StatutEmployee);
+                employeeModel.codeManager,
+                employeeModel.StatutEmployee,
+                employeeModel.Grafic);
 
             await _employeeRepository.AddEmployee(employee);
         }
@@ -58,6 +62,7 @@ namespace HR_PLATFORM_APPLICATION.Services
                 ContractDate = employee.ContractDate,
                 OperatorHR = employee.OperatorHR,
                 Studied = employee.Studied,
+                Grafic = employee.Grafic,
                 StatutEmployee = employee.StatutEmployee
             };
         }
@@ -79,6 +84,8 @@ namespace HR_PLATFORM_APPLICATION.Services
                 ContractDate = v.ContractDate,
                 OperatorHR = v.OperatorHR,
                 Studied = v.Studied,
+                codeManager = v.CodeManager,
+                Grafic = v.Grafic,
                 StatutEmployee = v.StatutEmployee
             }).ToList();
 
@@ -136,8 +143,45 @@ namespace HR_PLATFORM_APPLICATION.Services
             {
                 existingEmployee.StatutEmployee = updateEmployeeDto.StatutEmployee;
             }
+            if (updateEmployeeDto.Grafic != null && !updateEmployeeDto.Grafic.Equals("string"))
+            {
+                existingEmployee.Grafic = updateEmployeeDto.Grafic;
+            }
             return await _employeeRepository.UpdateEmployeeAsync(id,existingEmployee);
         }
 
+        public async Task AddUserImage(string fileName, byte[] fileData, int codeEmployee, string contentType)
+        {
+            var chechImage = await _employeeRepository.GetUserImage(codeEmployee);
+            if (chechImage != null) 
+            {
+                await _employeeRepository.UpdateEmployeeImage(fileName, fileData, codeEmployee, contentType);
+            }
+            else
+            {
+                await _employeeRepository.AddEmployeeImage(fileName, fileData, codeEmployee, contentType);
+            }
+        }
+
+        public async Task<GetImage> GetImage(int codeEmployee)
+        {
+            var result = await _employeeRepository.GetUserImage(codeEmployee);
+            if(result != null)
+            {
+
+            var image = new GetImage
+            {
+                CodEmployee = result.CodEmployee,
+                CVData = result.FileData,
+                FileName = result.FileName,
+                ContentType = result.ContentType,
+            };
+            return image;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

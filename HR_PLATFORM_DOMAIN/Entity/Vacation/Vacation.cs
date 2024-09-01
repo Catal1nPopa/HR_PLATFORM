@@ -14,8 +14,9 @@ namespace HR_PLATFORM_DOMAIN.Entity.Vacation
         public DateTime EndDate { get; set; }
         public int DaysVacation { get; set; }
         public int VacationDaysLeft { get; set; }
+        public int CodeManager { get; set; }
         public string TypeVacation { get; set; }
-
+        public string Status { get; set; }
         public Vacation() { }
 
         public Vacation(int codVacation,int codEmployee, DateTime startDate, DateTime endDate, int daysVacation, int vacationDaysLeft, string typeVacation)
@@ -29,7 +30,7 @@ namespace HR_PLATFORM_DOMAIN.Entity.Vacation
             TypeVacation = typeVacation;
         }
 
-        public Vacation( int codEmployee, DateTime startDate, DateTime endDate, int daysVacation, int vacationDaysLeft, string typeVacation)
+        public Vacation( int codEmployee, DateTime startDate, DateTime endDate, int daysVacation, int vacationDaysLeft, string typeVacation, int codeManager, string status)
         {
             CodEmployee = codEmployee;
             StartDate = startDate;
@@ -37,6 +38,8 @@ namespace HR_PLATFORM_DOMAIN.Entity.Vacation
             DaysVacation = daysVacation;
             VacationDaysLeft = vacationDaysLeft;
             TypeVacation = typeVacation;
+            CodeManager = codeManager;
+            Status = status;
         }
     }
 }

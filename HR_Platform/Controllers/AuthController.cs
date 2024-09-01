@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog.Context;
 
-namespace HR_PLATFORM.Controllers.Auth
+namespace HR_PLATFORM.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -25,7 +25,7 @@ namespace HR_PLATFORM.Controllers.Auth
                 var authResult = await _authService.AuthenticateAsync(loginDto.Username, loginDto.Password);
                 if (authResult == null)
                 {
-                    _logger.LogError($"User Unauthorized { loginDto.Username }");
+                    _logger.LogError($"User Unauthorized {loginDto.Username}");
                     return Unauthorized();
                 }
                 if (authResult.IsFirstLogin)
@@ -40,42 +40,42 @@ namespace HR_PLATFORM.Controllers.Auth
             catch (Exception ex)
             {
                 _logger.LogError($"Exception: {ex.Message}, on Login method");
-                return BadRequest(new { ex.Message, status = "error"});
+                return BadRequest(new { ex.Message, status = "error" });
             }
         }
 
         //[Authorize(Policy = "admin")]
         [HttpGet]
         [Route("test")]
-        public async Task<String> getTest()
+        public async Task<string> getTest()
         {
             return "test";
         }
 
         [HttpGet]
         [Route("Users")]
-        public async Task<List<UsersModel>> getUsers()
+        public async Task<IActionResult> getUsers()
         {
-            return await _authService.GetUsers();
+            try
+            {
+                return Ok(await _authService.GetUsers());
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         //[Authorize(Policy = "admin")]
         [HttpPost]
         [Route("addLogin")]
-        public async Task<IActionResult> AddEmployeeLogin([FromBody] AddNewLogin registerDto)
+        public async Task<IActionResult> AddEmployeeLogin([FromBody] AddNewLoginDto registerDto)
         {
             try
             {
+                _logger.LogInformation($"New user create: Username: {registerDto.Username}, Role: {registerDto.Role}");
                 var response = await _authService.CreateUserAsync(registerDto.Username, registerDto.Password, registerDto.Role, registerDto.codeEmployee);
-                if (response)
-                {
-                    _logger.LogInformation($"New user created: Username: {registerDto.Username}, Role: {registerDto.Role}");
-                    return Ok(new { message = "Utilizator creat cu succes", newStatus = "success" });
-                }
-                else
-                {
-                    return BadRequest(new { status = "error", Message = "Utilizatorul nu a fost creat" });
-                }
+                return Ok(new { message = "Utilizator creat cu succes", newStatus = "success" });
             }
             catch (Exception ex)
             {
@@ -87,28 +87,20 @@ namespace HR_PLATFORM.Controllers.Auth
         //[Authorize]
         [HttpPatch]
         [Route("ChangePassword")]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePassDTO dataPass)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePassDto dataPass)
         {
             try
             {
+                _logger.LogInformation($"Changed password: {dataPass.username}");
                 var result = await _authService.ChangeUserPassword(dataPass.username, dataPass.password, dataPass.codEmployee);
-                if(result)
-                {
-                    _logger.LogInformation($"Changed password: {dataPass.username}");
-                    return Ok(new { message = "Schimbă parola pentru utilizatorul: " + dataPass.username });
-                }
-                else
-                {
-                    return BadRequest(new { Message = "Eroare la schimbare parola", status = "error" });
-                }
+                return Ok(new { message = "Schimbare parola pentru utilizatorul: " + dataPass.username });
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogError($"Exception: {ex.Message}, on ChangePassword");
                 return BadRequest(new { ex.Message, status = "error" });
             }
         }
-
 
         [HttpDelete]
         [Route("DeleteLogin")]
@@ -118,8 +110,8 @@ namespace HR_PLATFORM.Controllers.Auth
             {
                 await _authService.DeleteUserLogin(username);
                 return Ok();
-            } 
-            catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest(new { ex.Message });
             }

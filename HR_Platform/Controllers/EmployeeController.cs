@@ -1,10 +1,12 @@
-﻿using HR_PLATFORM.DTOs.Employee;
+﻿using HR_PLATFORM.DTOs.CV;
+using HR_PLATFORM.DTOs.Employee;
 using HR_PLATFORM_APPLICATION.Interface;
 using HR_PLATFORM_APPLICATION.Model.Auth;
 using HR_PLATFORM_APPLICATION.Model.Employee;
+using HR_PLATFORM_APPLICATION.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HR_PLATFORM.Controllers.Employee
+namespace HR_PLATFORM.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -32,17 +34,19 @@ namespace HR_PLATFORM.Controllers.Employee
                     ContractDate = addEmployeeDto.ContractDate,
                     Studied = addEmployeeDto.Studied,
                     OperatorHR = addEmployeeDto.OperatorHR,
-                    StatutEmployee = addEmployeeDto.StatutEmployee
+                    codeManager = addEmployeeDto.codeManager,
+                    StatutEmployee = addEmployeeDto.StatutEmployee,
+                    Grafic = addEmployeeDto.Grafic,
                 };
 
                 await _employeeService.AddEmployee(employeeModel);
                 _logger.LogInformation($"New Employee added {addEmployeeDto}");
                 return Ok(new { message = "Adaugare angajat nou cu succes", status = "success" });
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 _logger.LogError($"Exception: {ex.Message}, on AddEmployee method");
-                return BadRequest(new { ex.Message, status = "error" });
+                return BadRequest(ex);
             }
         }
 
@@ -69,10 +73,12 @@ namespace HR_PLATFORM.Controllers.Employee
                 ContractDate = employee.ContractDate,
                 Studied = employee.Studied,
                 OperatorHR = employee.OperatorHR,
+                CodeManager = employee.codeManager,
+                Grafic = employee.Grafic,
                 StatutEmployee = employee.StatutEmployee,
             };
 
-            return Ok(new { employeeDto, status = "success" });
+            return Ok(employeeDto);
         }
 
         [HttpDelete("{id}")]
@@ -98,16 +104,16 @@ namespace HR_PLATFORM.Controllers.Employee
 
         [HttpGet]
         [Route("GetEmployees")]
-        public async Task<List<EmployeeModel>> GetEmployees()
+        public async Task<IActionResult> GetEmployees()
         {
             try
             {
-                return await _employeeService.GetEmployees();
+                return Ok(await _employeeService.GetEmployees());
 
             }
-            catch
+            catch(Exception ex)
             {
-                return new List<EmployeeModel>();
+                return BadRequest(ex.Message);
             }
         }
 
@@ -127,6 +133,7 @@ namespace HR_PLATFORM.Controllers.Employee
                     Function = employee.Function,
                     ContractCode = employee.ContractCode,
                     Studied = employee.Studied,
+                    Grafic = employee.Grafic,
                     StatutEmployee = employee.StatutEmployee,
                 };
                 var result = await _employeeService.UpdateEmployeeAsync(id, employeeDto);
@@ -145,7 +152,46 @@ namespace HR_PLATFORM.Controllers.Employee
             }
         }
 
+        [HttpPost("uploadImage")]
+        public async Task<IActionResult> UploadUserImage([FromForm] UploadImage dto)
+        {
+            if (dto.File == null || dto.File.Length == 0)
+                return BadRequest("File is empty.");
 
+            using var memoryStream = new MemoryStream();
+            await dto.File.CopyToAsync(memoryStream);
 
+            await _employeeService.AddUserImage(dto.File.FileName, memoryStream.ToArray(), dto.EmployeeId, dto.File.ContentType);
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("GetImage")]
+        public async Task<IActionResult> GetImage(int codeEmployee)
+        {
+            try
+            {
+                var employeeImage = await _employeeService.GetImage(codeEmployee);
+                if (employeeImage == null)
+                {
+                    return BadRequest();
+                }
+
+                var cv = new GetUserImageDTO
+                {
+                    CodEmployee = employeeImage.CodEmployee,
+                    CV_Data = employeeImage.CVData,
+                    FileName = employeeImage.FileName,
+                    ContentType = employeeImage.ContentType
+                };
+                //Response.Headers.Add("X-File-Name", employeeImage.FileName);
+                return File(cv.CV_Data, cv.ContentType, cv.FileName);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
     }
 }

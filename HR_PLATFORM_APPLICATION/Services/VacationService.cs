@@ -21,7 +21,9 @@ namespace HR_PLATFORM_APPLICATION.Services
                 vacationModel.EndDate,
                 vacationModel.DaysVacation,
                 vacationModel.VacationDaysLeft,
-                vacationModel.TypeVacation);
+                vacationModel.TypeVacation,
+                vacationModel.CodeManager,
+                vacationModel.Status);
 
             await _vacationRepository.AddVacation(vacation);
         }

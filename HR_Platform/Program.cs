@@ -1,4 +1,7 @@
-﻿using HR_PLATFORM_APPLICATION.Injections;
+﻿using HR_PLATFORM;
+using HR_PLATFORM_APPLICATION.Injection;
+using HR_PLATFORM_APPLICATION.Interface;
+using HR_PLATFORM_INFRASTRUCTURE;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -22,6 +25,7 @@ builder.Host.UseSerilog();
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddApplication();
+builder.Services.AddInfrastructure();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

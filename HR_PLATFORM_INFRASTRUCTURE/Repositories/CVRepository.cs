@@ -28,6 +28,23 @@ namespace HR_PLATFORM_INFRASTRUCTURE.Repositories
             }
         }
 
+        public async Task UpdateCV(string filename, byte[] fileData, int codeEmployee, string contentType)
+        {
+            var query = "UPDATE CV SET FileName = @FileName, FileData = @FileData, UploadDate = SYSDATETIME(), ContentType = @ContentType WHERE CodEmployee = @codeEmployee";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("codeEmployee", codeEmployee, DbType.Int32);
+            parameters.Add("FileName", filename, DbType.String);
+            parameters.Add("FileData", fileData, DbType.Binary);
+            parameters.Add("ContentType", contentType, DbType.String);
+
+            using (var connection = _dapperContext.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, parameters);
+                connection.Close();
+            }
+        }
+
         public async Task<CV> DownloadCV(int codeEmployee)
         {
             var query = "SELECT * FROM CV WHERE CodEmployee = @codeEmployee";

@@ -4,33 +4,13 @@ using HR_PLATFORM_APPLICATION.Model.CV;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HR_PLATFORM.Controllers.CV
+namespace HR_PLATFORM.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CVController(ICVService cVService) : ControllerBase
     {
         private readonly ICVService _cvService = cVService;
-
-        //[HttpPost]
-        //[Route("AddCV")]
-        //public async Task<IActionResult> AddCV([FromBody] CVUploadDto cVUploadDto)
-        //{
-        //    if (string.IsNullOrEmpty(cVUploadDto.File) || cVUploadDto.FileName == null)
-        //        return BadRequest("No file uploaded.");
-
-        //    byte[] fileData = Convert.FromBase64String(cVUploadDto.File);
-
-        //    //var newCV = new CVModel
-        //    //{
-        //    //    CodeEmployee = cVUploadDto.CodeEmployee,
-        //    //    File = cVUploadDto.File
-        //    //};
-
-        //    await _cvService.AddCV(cVUploadDto.FileName, fileData, cVUploadDto.CodeEmployee);
-
-        //    return Ok("CV incarcat cu succes");
-        //}
 
         [HttpPost("upload")]
         public async Task<IActionResult> UploadCV([FromForm] UploadCVDto dto)
@@ -52,7 +32,7 @@ namespace HR_PLATFORM.Controllers.CV
         public async Task<IActionResult> DownloadCV(int codeEmployee)
         {
             var employeeCV = await _cvService.DownloadCV(codeEmployee);
-            if(employeeCV == null)
+            if (employeeCV == null)
             {
                 return BadRequest();
             }
